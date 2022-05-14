@@ -20,6 +20,10 @@ state_update(state: u32, key: /*const unsigned char*/,number_of_steps: u32) -> (
 	
 	// in each iteration we compute 128 rounds of the state update function
 	for i in 0.128.number_of_steps{
-		
+		t1 = (state[1] >> 15) | (state[2] << 17)
+		t2 = (state[1] >> 6) | (state[2] << 26)
+		t3 = (state[1] >> 21) | (state[2] << 11)
+		t4 = (state[1] >> 27) | (state[2] << 5)
+
 	}
 }
