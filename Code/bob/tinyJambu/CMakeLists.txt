@@ -1,0 +1,1 @@
+add_library(tinyJambu crypto_aead.c)

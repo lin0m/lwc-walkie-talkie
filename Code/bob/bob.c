@@ -1,8 +1,11 @@
-#include <string.h>
 #include <stdio.h>
-#include "encrypt.c"
+#include <string.h>
+#include "pico/stdlib.h"
+#include "hardware/pio.h"
+#include "crypto_aead.h"
 
 int main(void){
+    stdio_init_all();
     /*
     Count = 35
     Key = 000102030405060708090A0B0C0D0E0F
