@@ -1,1 +1,1 @@
-add_library(tinyJambu crypto_aead.c)
+add_library(tinyJambu encrypt.c)
