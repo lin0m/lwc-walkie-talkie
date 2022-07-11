@@ -1,0 +1,8 @@
+cmake_minimum_required(VERSION 3.13)
+set(CMAKE_C_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
+project(bob_x86 VERSION 1.0)
+add_executable(bob_x86 ../bob/bob.c)
+add_subdirectory(../bob/tinyJambu tinyJambu)
+target_link_libraries(bob_x86 tinyJambu)
+target_include_directories(bob_x86 PUBLIC "/home/russell/Downloads/lightweight-cryptography/Code/bob/tinyJambu")

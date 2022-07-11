@@ -16,7 +16,7 @@ project(test C CXX ASM)
 
 # Initialise the Raspberry Pi Pico SDK
 pico_sdk_init()
-
+option(USE_PICO "Using pico-sdk" ON)
 # Add executable. Default name is the project name, version 0.1
 
 add_executable(test bob.c )

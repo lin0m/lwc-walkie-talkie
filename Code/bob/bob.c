@@ -1,11 +1,15 @@
 #include <stdio.h>
 #include <string.h>
-#include "pico/stdlib.h"
-#include "hardware/pio.h"
+#ifdef USE_PICO
+    #include "pico/stdlib.h"
+    #include "hardware/pio.h"
+#endif
 #include "crypto_aead.h"
 
 int main(void){
-    stdio_init_all();
+    #ifdef USE_PICO
+        stdio_init_all();
+    #endif
     /*
     Count = 35
     Key = 000102030405060708090A0B0C0D0E0F
@@ -17,7 +21,7 @@ int main(void){
 
     // variables
     unsigned char c[80];           // ciphertext
-    unsigned long long *clen;   // ciphertext length
+    unsigned long long *clen = 80;   // ciphertext length
     const unsigned char m[] = "00";     // plaintext
     unsigned long long mlen = sizeof(m);    // plaintext length
     const unsigned char ad[] = "00";    // associated data
@@ -28,6 +32,6 @@ int main(void){
 
     crypto_aead_encrypt(c, clen, m, mlen, ad, adlen, nsec, npub, k);
 
-    printf("Ciphertext: %s", c);
+    printf("Ciphertext: %s\n", c);
     return 0;
 }

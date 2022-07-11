@@ -148,7 +148,7 @@ int crypto_aead_encrypt(
         state_update(state, k, NROUND1);
         ((unsigned int*)mac)[1] = state[2];
 
-        *clen = mlen + 8;
+        // *clen = mlen + 8;
         for (j = 0; j < 8; j++) c[mlen+j] = mac[j];  
 
         return 0;
