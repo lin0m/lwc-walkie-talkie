@@ -12,9 +12,9 @@
 #define UART_TX_PIN1 0
 #define UART_RX_PIN1 1
 
-bool waitUntilReady() {
+bool waitUntilReady(char* currentString, const size_t length) {
     char input = ' ';
-    char currentString[40] = "";
+    currentString = "";
     char* resultOK = NULL;
     char* resultERROR = NULL;
     while (resultOK == NULL && resultERROR == NULL) {
@@ -29,9 +29,17 @@ bool waitUntilReady() {
         return true;
     }
 }
-char* searchForStrings(char* keys, size_t amount) {
+// /**
+//  * @brief 
+//  * 
+//  * @param input 
+//  * @param keys 
+//  * @param amount 
+//  * @return char* 
+//  */
+// char* searchForStrings(char* input, char** keys, size_t amount) {
 
-}
+// }
 int main()
 {
     stdio_init_all();
@@ -41,25 +49,26 @@ int main()
     gpio_set_function(UART_RX_PIN, GPIO_FUNC_UART);
     gpio_set_function(UART_TX_PIN1, GPIO_FUNC_UART);
     gpio_set_function(UART_RX_PIN1, GPIO_FUNC_UART);
-    uart_puts(UART_ID, "AT+CWMODE=1\r\n");
-    while (!waitUntilReady()) {
-        uart_puts(UART_ID, "AT+CWMODE=1\r\n");
+    uart_puts(UART_ID, "AT+CWMODE=2\r\n");
+    char currentString[80] = "";
+    // while (!waitUntilReady()) {
+    //     uart_puts(UART_ID, "AT+CWMODE=1\r\n");
+    // }
+    while (!waitUntilReady(currentString, 80)) {
+        uart_puts(UART_ID, "AT+CIPMUX=1\r\n");
     }
-    while (!waitUntilReady()) {
-        uart_puts(UART_ID, "AT+CWJAP=\"espressif\",\"1234567890\"\r\n");
+    sleep_ms(10000);
+    while (!waitUntilReady(currentString, 80)) {
+        uart_puts(UART_ID1, "AT+CWSAP=\"expressif\",\"1234567890\",5,3\r\n");
+        printf(currentString);
     }
-    while (!waitUntilReady()) {
-        uart_puts(UART_ID1, "AT+CIPSTA?\r\n");
+    while (!waitUntilReady(currentString, 80)) {
+        uart_puts(UART_ID, "AT+CIPSERVER=1\r\n");
     }
-    while (!waitUntilReady()) {
-        uart_puts(UART_ID1, "AT+CIPSTA?\r\n");
+    while (!waitUntilReady(currentString, 80)) {
+        uart_puts(UART_ID, "AT+CIPSEND=0,4\r\n");
     }
-    while (!waitUntilReady()) {
-        uart_puts(UART_ID, "AT+CIPSTART=\"TCP\",\"192.168.3.102\",8080\r\n");
-    }
-    while (!waitUntilReady()) {
-        uart_puts(UART_ID, "AT+CIPSEND=4\r\n");
-    }
+    uart_puts(UART_ID, "test\r\n");
     sleep_ms(1000);
     return 0;
 }

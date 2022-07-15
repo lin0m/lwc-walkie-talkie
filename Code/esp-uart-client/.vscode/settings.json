@@ -14,8 +14,6 @@
                },
     },
     "files.associations": {
-      "stdio.h": "c",
-      "string.h": "c",
-      "gpio.h": "c"
+      "uart.h": "c"
     },
 }
