@@ -58,5 +58,15 @@ int main(void){
         printf("%02X", c[i]);
     }
     printf("\n");
+    // decrypt
+    crypto_aead_decrypt(m, mlen, nsec, c, clen, ad, adlen, npub, k);
+
+    // print
+    printf("Plaintext = ");
+    for (int i = 0; i < sizeof(m); i++){
+        printf("%02X", m[i]);
+    }
+    printf("\n");
+
     return 0;
 }
