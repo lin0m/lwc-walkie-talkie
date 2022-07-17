@@ -41,7 +41,7 @@ int main()
     gpio_set_function(UART_RX_PIN1, GPIO_FUNC_UART);
     uart_puts(UART_ID, "AT+CWMODE=1\r\n");
     const size_t kcurrentString = 80;
-    char currentString[kcurrentString] = "";
+    char currentString[kcurrentString];
     while (!waitUntilReady(currentString, 80)) {
         uart_puts(UART_ID, "AT+CWJAP=\"espressif\",\"1234567890\"\r\n");
     }
