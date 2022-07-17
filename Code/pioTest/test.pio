@@ -1,0 +1,26 @@
+.program test
+; side 0 is the data pin, which should be handled by the out instruction
+; let side 1 be the wsel, side 2 be the clock/bck
+.side_set 2
+; need channel, then data, then bck
+loop:
+    pull
+    ; set the wsel to left channel
+    nop side 0b10 [0]
+    ; there might be a problem here since the out instruction stalls, but side-set still happens (bck clock stays 1)
+    out pins, 16 side 0b11 [1]
+    jmp loop
+
+% c-sdk {
+static inline void test_program_init(PIO pio, uint sm, uint offset, uint pin) {
+    pio_sm_config c = test_program_get_default_config(offset);
+    sm_config_set_out_pins(&c, pin, 1);
+    sm_config_out_shift(&c, false, false, 32);
+    sm_config_set_sideset_pins(&c, pin + 1);
+    pio_gpio_init(pio, pin);
+    pio_sm_set_consecutive_pindirs(pio, sm, pin, 1, true);
+
+    pio_sm_init(pio, sm, offset, &c);
+    pio_sm_set_enabled(pio, sm, true);
+}
+%}
