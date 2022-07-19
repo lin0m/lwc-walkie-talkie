@@ -21,7 +21,11 @@ bool waitUntilReady(char* currentString, const size_t length) {
         resultOK = strstr(currentString, "OK");
         resultERROR = strstr(currentString, "ERROR");
         input = uart_getc(UART_ID);
+        // if input is too long, reset the string
         strncat(currentString, &input, 1);
+        if (sizeof(currentString) >= length) {
+            currentString = "";
+        }
     }
     if (resultERROR != NULL) {
         return false;
@@ -51,10 +55,14 @@ int main()
     while (!waitUntilReady(currentString, 80)) {
         uart_puts(UART_ID, "AT+CIPSTART=\"TCP\",\"192.168.3.102\",8080\r\n");
     }
+
     while (!waitUntilReady(currentString, 80)) {
         uart_puts(UART_ID, "AT+CIPSEND=4\r\n");
     }
     uart_puts(UART_ID, "test\r\n");
-
+    // while (!waitUntilReady(currentString, 80)) {
+    //     uart_puts(UART_ID, "AT+CIPSEND=4\r\n");
+    // }
+    
     return 0;
 }

@@ -21,7 +21,11 @@ bool waitUntilReady(char* currentString, const size_t length) {
         resultOK = strstr(currentString, "OK");
         resultERROR = strstr(currentString, "ERROR");
         input = uart_getc(UART_ID);
+        // if input is too long, reset the string
         strncat(currentString, &input, 1);
+        if (sizeof(currentString) >= length) {
+            currentString = "";
+        }
     }
     if (resultERROR != NULL) {
         return false;
@@ -29,17 +33,17 @@ bool waitUntilReady(char* currentString, const size_t length) {
         return true;
     }
 }
-// /**
-//  * @brief 
-//  * 
-//  * @param input 
-//  * @param keys 
-//  * @param amount 
-//  * @return char* 
-//  */
-// char* searchForStrings(char* input, char** keys, size_t amount) {
-
-// }
+char* searchForAllStrings(char* input, char** keys, size_t amount) {
+    char* result = NULL;
+    for (size_t i = 0; i < amount; i++)
+    {
+        strstr(input, keys[i]);
+        if (result == NULL) {
+            return NULL;
+        }
+    }
+    return result;
+}
 int main()
 {
     stdio_init_all();
@@ -65,10 +69,12 @@ int main()
     while (!waitUntilReady(currentString, 80)) {
         uart_puts(UART_ID, "AT+CIPSERVER=1\r\n");
     }
-    while (!waitUntilReady(currentString, 80)) {
-        uart_puts(UART_ID, "AT+CIPSEND=0,4\r\n");
-    }
-    uart_puts(UART_ID, "test\r\n");
-    sleep_ms(1000);
+    // while (!waitUntilReady(currentString, 80)) {
+    //     uart_puts(UART_ID, "AT+CIPSEND=0,4\r\n");
+    // }
+    // uart_puts(UART_ID, "test\r\n");
+    // while (!waitUntilReady(currentString, 80)) {
+    //     uart_puts(UART_ID, "AT+CIPSEND=0,4\r\n");
+    // }
     return 0;
 }
