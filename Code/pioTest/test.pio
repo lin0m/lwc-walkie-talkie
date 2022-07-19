@@ -15,7 +15,7 @@ set x, 14 side 0b11
 loopLeft:
     ; needs to happen 16 times - corresponding to data in size
     out pins, 1 side 0b10
-    jmp x-- loopLeft 0b11
+    jmp x-- loopLeft side 0b11
     ; set the wsel to left channel, then send last bit
     out pins, 1 side 0b00
     set x, 14 side 0b01
@@ -40,7 +40,7 @@ loopRight:
 static inline void test_program_init(PIO pio, uint sm, uint offset, uint pin) {
     pio_sm_config c = test_program_get_default_config(offset);
     sm_config_set_out_pins(&c, pin, 1);
-    sm_config_out_shift(&c, false, true, 32);
+    sm_config_set_out_shift(&c, false, true, 32);
     sm_config_set_sideset_pins(&c, pin + 1);
     pio_gpio_init(pio, pin);
     pio_sm_set_consecutive_pindirs(pio, sm, pin, 1, true);

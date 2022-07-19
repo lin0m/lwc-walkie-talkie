@@ -25,6 +25,7 @@ int main()
                 // This should change for higher quality audio or to save bandwidth
     // put the values twice in input because of using mono audio - 16 bits for left, 16 bits for right
     while (true) {
+        // For now, let's see what happens if there is a huge delay between data in and a super fast bclk
         pio_sm_put_blocking(pio, sm, (MAX_VALUE_I2S * (1 / 2) << 16u) | MAX_VALUE_I2S * (1 / 2));
         sleep_ms(C_PERIOD / 2);
         pio_sm_put_blocking(pio, sm, -((MAX_VALUE_I2S * (1 / 2) << 16u) | MAX_VALUE_I2S * (1 / 2)));
