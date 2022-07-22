@@ -24,7 +24,7 @@ add_executable(esp-uart-client esp-uart-client.c )
 pico_set_program_name(esp-uart-client "esp-uart-client")
 pico_set_program_version(esp-uart-client "0.1")
 
-pico_enable_stdio_uart(esp-uart-client 1)
+pico_enable_stdio_uart(esp-uart-client 0)
 pico_enable_stdio_usb(esp-uart-client 1)
 
 # Add the standard library to the build

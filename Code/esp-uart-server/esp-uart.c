@@ -69,7 +69,6 @@ int main()
     gpio_set_function(UART_RX_PIN1, GPIO_FUNC_UART);
     uart_puts(UART_ID, "AT+CWMODE=2\r\n");
     char currentString[80] = "test";
-    printf(currentString);
     while (!waitUntilReady(currentString, 80)) {
         uart_puts(UART_ID, "AT+CWMODE=2\r\n");
         uart_puts(UART_ID1, currentString);
