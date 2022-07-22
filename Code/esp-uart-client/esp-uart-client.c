@@ -46,12 +46,14 @@ int main()
     uart_puts(UART_ID, "AT+CWMODE=1\r\n");
     const size_t kcurrentString = 80;
     char currentString[kcurrentString];
+    sleep_ms(10000);
     while (!waitUntilReady(currentString, 80)) {
         uart_puts(UART_ID, "AT+CWJAP=\"espressif\",\"1234567890\"\r\n");
     }
     while (!waitUntilReady(currentString, 80)) {
         uart_puts(UART_ID, "AT+CIPSTA?\r\n");
     }
+    // change the ip based on the previous command output
     while (!waitUntilReady(currentString, 80)) {
         uart_puts(UART_ID, "AT+CIPSTART=\"TCP\",\"192.168.3.102\",8080\r\n");
     }

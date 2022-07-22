@@ -21,8 +21,11 @@ int main()
             // The pio must complete just before the sampling period and there are ~32 cycles in the pio, so the frequency of the pio must be 32/(sampling period)
             // sampling frequency should be constant and related to the bitrate of the audio 
                 // bitrate = sample rate(!!!) * bit depth(bits of data) * 2(number of channels)
-                // standard bitrate should be 44100 kHz for CD, some experimenting can be done, but note that the data is not compressed at all, so lower bitrates may drastically decrease audio quality because less important bits are not removed/optimized
+                // standard bitrate should be 44100 Hz for CD, some experimenting can be done, but note that the data is not compressed at all, so lower bitrates may drastically decrease audio quality because less important bits are not removed/optimized
                 // This should change for higher quality audio or to save bandwidth
+                // pio frequency = 1.4112 MHz
+                // pico frequency = 125Mhz
+                // divider value = 88.57709751
     // put the values twice in input because of using mono audio - 16 bits for left, 16 bits for right
     while (true) {
         // For now, let's see what happens if there is a huge delay between data in and a super fast bclk

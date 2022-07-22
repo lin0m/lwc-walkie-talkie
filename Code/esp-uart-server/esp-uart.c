@@ -61,11 +61,11 @@ int main()
     while (!waitUntilReady(currentString, 80)) {
         uart_puts(UART_ID, "AT+CIPMUX=1\r\n");
     }
-    sleep_ms(10000);
     while (!waitUntilReady(currentString, 80)) {
         uart_puts(UART_ID1, "AT+CWSAP=\"expressif\",\"1234567890\",5,3\r\n");
-        printf(currentString);
+        // printf(currentString);
     }
+    sleep_ms(10000);
     while (!waitUntilReady(currentString, 80)) {
         uart_puts(UART_ID, "AT+CIPSERVER=1\r\n");
     }
