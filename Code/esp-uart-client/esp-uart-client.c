@@ -62,6 +62,7 @@ int main()
     while (!waitUntilReady(currentString, kcurrentString)) {
         uart_puts(UART_ID, "AT+CIPSTA?\r\n");
     }
+    printf(currentString);
     // change the ip based on the previous command output
     uart_puts(UART_ID, "AT+CIPSTART=\"TCP\",\"192.168.3.102\",8080\r\n");
     while (!waitUntilReady(currentString, kcurrentString)) {
