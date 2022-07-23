@@ -30,14 +30,17 @@ bool waitUntilReady(char* currentString, const size_t length) {
         resultERROR = strstr(currentString, "ERROR");
         input = uart_getc(UART_ID);
         strncat(currentString, &input, 1);
+        // printf(currentString);
         // if input is too long, reset the string
         if (strlen(currentString) >= length) {
             strcpy(currentString, "");
         }
     }
     if (resultERROR != NULL) {
+        // strcpy(currentString, "");
         return false;
     } else if (resultOK != NULL) {
+        // strcpy(currentString, "");
         return true;
     }
 }
@@ -50,31 +53,41 @@ int main()
     gpio_set_function(UART_RX_PIN, GPIO_FUNC_UART);
     gpio_set_function(UART_TX_PIN1, GPIO_FUNC_UART);
     gpio_set_function(UART_RX_PIN1, GPIO_FUNC_UART);
+    char currentString[256] = "";
+    // char temp[80] = "";
     uart_puts(UART_ID, "AT+CWMODE=1\r\n");
-    const size_t kcurrentString = 80;
-    char currentString[kcurrentString];
-    sleep_ms(10000);
-    uart_puts(UART_ID, "AT+CWJAP=\"espressif\",\"1234567890\"\r\n");
-    while (!waitUntilReady(currentString, kcurrentString)) {
-        uart_puts(UART_ID, "AT+CWJAP=\"espressif\",\"1234567890\"\r\n");
+    while (!waitUntilReady(currentString, 256)) {
+        uart_puts(UART_ID, "AT+CWMODE=1\r\n");
+        printf(currentString);
     }
+    sleep_ms(10000);
+    printf("connecting to wifi");
+    uart_puts(UART_ID, "AT+CWJAP=\"expressif\",\"1234567890\"\r\n");
+    while (!waitUntilReady(currentString, 256)) {
+        uart_puts(UART_ID, "AT+CWJAP=\"expressif\",\"1234567890\"\r\n");
+        printf(currentString);
+    }
+    printf("requesting ip info");
     uart_puts(UART_ID, "AT+CIPSTA?\r\n");
-    while (!waitUntilReady(currentString, kcurrentString)) {
+    while (!waitUntilReady(currentString, 256)) {
         uart_puts(UART_ID, "AT+CIPSTA?\r\n");
+        printf(currentString);
     }
     printf(currentString);
     // change the ip based on the previous command output
-    uart_puts(UART_ID, "AT+CIPSTART=\"TCP\",\"192.168.3.102\",8080\r\n");
-    while (!waitUntilReady(currentString, kcurrentString)) {
-        uart_puts(UART_ID, "AT+CIPSTART=\"TCP\",\"192.168.3.102\",8080\r\n");
+    uart_puts(UART_ID, "AT+CIPSTART=\"TCP\",\"192.168.4.1\",333\r\n");
+    while (!waitUntilReady(currentString, 256)) {
+        uart_puts(UART_ID, "AT+CIPSTART=\"TCP\",\"192.168.4.1\",333\r\n");
+        printf(currentString);
     }
 
     uart_puts(UART_ID, "AT+CIPSEND=4\r\n");
-    while (!waitUntilReady(currentString, kcurrentString)) {
+    while (!waitUntilReady(currentString, 256)) {
         uart_puts(UART_ID, "AT+CIPSEND=4\r\n");
+        printf(currentString);
     }
     uart_puts(UART_ID, "test\r\n");
-    // while (!waitUntilReady(currentString, 80)) {
+    // while (!waitUntilReady(currentString, 256)) {
     //     uart_puts(UART_ID, "AT+CIPSEND=4\r\n");
     // }
     
