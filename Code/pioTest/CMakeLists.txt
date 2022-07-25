@@ -38,3 +38,4 @@ pico_add_extra_outputs(pioTest)
 
 pico_generate_pio_header(pioTest ${CMAKE_CURRENT_LIST_DIR}/test.pio)
 target_sources(pioTest PRIVATE pioTest.c)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
