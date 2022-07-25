@@ -19,7 +19,7 @@ pico_sdk_init()
 
 # Add executable. Default name is the project name, version 0.1
 
-add_executable(micTest pioTest.c)
+add_executable(micTest micTest.c)
 pico_set_program_name(micTest "micTest")
 pico_set_program_version(micTest "0.1")
 
@@ -36,6 +36,6 @@ target_link_libraries(micTest
 
 pico_add_extra_outputs(micTest)
 
-pico_generate_pio_header(micTest ${CMAKE_CURRENT_LIST_DIR}/test.pio)
-target_sources(micTest PRIVATE pioTest.c)
+pico_generate_pio_header(micTest ${CMAKE_CURRENT_LIST_DIR}/min.pio)
+target_sources(micTest PRIVATE micTest.c)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
