@@ -1,0 +1,51 @@
+.program test
+; input data totaling 32 bytes - 16 for each channel and the program should work
+; let side 0 be the wsel, side 1 be the clock/bck
+.side_set 2
+; need to set channel, then one bit of data, then bck, then repeat
+; low means begin reading a bit
+; I believe the wsel determines the size of the data in and must be used
+; example code from pico-extras says it needs autopull, not sure why
+; should note that this code is basically the same as the pico-extras - it's pretty optimized already, using all side sets available for each instruction. The only change is the label, which specify which channel is being used instead of a vague "bitloop0"
+
+; set the wsel to left channel, need to be set one cycle before data
+; value set to 14 because first out is not counted and last out is not counted
+set x, 14 side 0b10
+; loop:
+loopLeft:
+    ; needs to happen 16 times - corresponding to data in size
+    in pins, 1 side 0b11
+    jmp x-- loopLeft side 0b10
+    ; set the wsel to left channel, then send last bit
+    out pins, 1 side 0b01
+    set x, 14 side 0b00
+loopRight:
+    ; needs to happen 16 times - corresponding to data in size
+    out pins, 1 side 0b01
+    ; set the wsel to right channel, then send last bit
+    jmp x--, loopRight side 0b00
+    out pins, 1 side 0b11
+    ; is a loop required for i2s or is it handled outside, in C?
+        ; if it's outside, the clock speed must be set or else there will either be a quick pulse of sound or a square wave like shape when the device is waiting
+    ; jmp loop
+
+; out_shift, second parameter sets shift direction (msb first)
+; also the clock pin can be set to an arbitrary gp pin by adding a parameter and using it as the sideset_pins base
+; if the clock is causing problems, use sm_config_set_clkdiv(&c, <value>)
+    ; problems could be caused by excessive waiting, as mentioned before and making sure that the clock is evenly distributed in terms of time should resolve the problems
+    ; note that the example code doesn't configure the clock in the pio portion and instead configures it outside, in C
+    ; it seems to allow dynamic audio frequencies that way
+
+% c-sdk {
+static inline void test_program_init(PIO pio, uint sm, uint offset, uint pin) {
+    pio_sm_config c = test_program_get_default_config(offset);
+    sm_config_set_out_pins(&c, pin, 1);
+    sm_config_set_out_shift(&c, false, true, 32);
+    sm_config_set_sideset_pins(&c, pin + 1);
+    pio_gpio_init(pio, pin);
+    pio_sm_set_consecutive_pindirs(pio, sm, pin, 1, true);
+
+    pio_sm_init(pio, sm, offset, &c);
+    pio_sm_set_enabled(pio, sm, true);
+}
+%}
