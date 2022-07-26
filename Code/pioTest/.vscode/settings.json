@@ -1,19 +1,23 @@
 {
   "cmake.configureOnOpen": false,
   "cmake.statusbar.advanced": {
-    "debug" : {
+    "debug": {
       "visibility": "hidden"
-              },    "launch" : {
-      "visibility": "hidden"
-               },
-    "build" : {
-      "visibility": "hidden"
-               },
-    "buildTarget" : {
-      "visibility": "hidden"
-               },
     },
-    "files.associations": {
-      "test.pio.h": "c"
+    "launch": {
+      "visibility": "hidden"
     },
+    "build": {
+      "visibility": "hidden"
+    },
+    "buildTarget": {
+      "visibility": "hidden"
+    },
+  },
+  "files.associations": {
+    "test.pio.h": "c",
+    "pio.h": "c",
+    "stdlib.h": "c",
+    "stdio.h": "c"
+  },
 }

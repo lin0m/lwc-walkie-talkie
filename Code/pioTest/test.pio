@@ -13,22 +13,19 @@
 ; set x, 14 side 0b11
 ; loop:
 set x, 14 side 0b11
-loopLeft:
+loopR:
     ; needs to happen 16 times - corresponding to data in size
     out pins, 1 side 0b10
-    jmp x-- loopLeft side 0b11
+    jmp x-- loopR side 0b11
     ; set the wsel to left channel, then send last bit
     out pins, 1 side 0b00
     set x, 14 side 0b01
-loopRight:
+loopL:
     ; needs to happen 16 times - corresponding to data in size
     out pins, 1 side 0b00
     ; set the wsel to right channel, then send last bit
-    jmp x--, loopRight side 0b01
+    jmp x--, loopL side 0b01
     out pins, 1 side 0b10
-    ; is a loop required for i2s or is it handled outside, in C?
-        ; if it's outside, the clock speed must be set or else there will either be a quick pulse of sound or a square wave like shape when the device is waiting
-    ; jmp loop
 ; public entry_point:
 ; out_shift, second parameter sets shift direction (msb first)
 ; also the clock pin can be set to an arbitrary gp pin by adding a parameter and using it as the sideset_pins base
@@ -46,16 +43,15 @@ static inline void test_program_init(PIO pio, uint sm, uint offset, uint pin, ui
     sm_config_set_clkdiv(&c, div);
     sm_config_set_out_pins(&c, pin, 1);
     sm_config_set_out_shift(&c, false, true, 32);
+    sm_config_set_fifo_join(&c, PIO_FIFO_JOIN_TX);
     sm_config_set_sideset_pins(&c, side_pin);
     pio_gpio_init(pio, pin);
     pio_gpio_init(pio, side_pin);
     pio_gpio_init(pio, side_pin + 1);
+    pio_sm_init(pio, sm, offset, &c);
     uint pin_mask = (1u << pin) | (3u << side_pin);
     pio_sm_set_pindirs_with_mask(pio, sm, pin_mask, pin_mask);
-    // pio_sm_set_out_pins(pio, sm, side_pin, true);
-    // pio_sm_set_out_pins(pio, sm, side_pin + 1, true);
     pio_sm_set_pins(pio, sm, 0);
-    pio_sm_init(pio, sm, offset, &c);
     pio_sm_set_enabled(pio, sm, true);
     // pio_sm_exec(pio, sm, pio_encode_jmp(offset + test_offset_entry_point));
 }
