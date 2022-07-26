@@ -12,6 +12,7 @@
 ; value set to 14 because first out is not counted and last out is not counted
 ; set x, 14 side 0b11
 ; loop:
+set x, 14 side 0b11
 loopLeft:
     ; needs to happen 16 times - corresponding to data in size
     out pins, 1 side 0b10
@@ -28,8 +29,7 @@ loopRight:
     ; is a loop required for i2s or is it handled outside, in C?
         ; if it's outside, the clock speed must be set or else there will either be a quick pulse of sound or a square wave like shape when the device is waiting
     ; jmp loop
-public entry_point:
-    set x, 14 side 0b11
+; public entry_point:
 ; out_shift, second parameter sets shift direction (msb first)
 ; also the clock pin can be set to an arbitrary gp pin by adding a parameter and using it as the sideset_pins base
 ; if the clock is causing problems, use sm_config_set_clkdiv(&c, <value>)
@@ -42,22 +42,22 @@ public entry_point:
 #include "hardware/clocks.h"
 static inline void test_program_init(PIO pio, uint sm, uint offset, uint pin, uint side_pin) {
     pio_sm_config c = test_program_get_default_config(offset);
-    ; float div = (clock_get_hz(clk_sys)) / (32/((float)1/44100));
-    sm_config_set_clkdiv(&c, 88.57709751);
+    float div = (clock_get_hz(clk_sys)) / (32/((float)1/44100));
+    sm_config_set_clkdiv(&c, div);
     sm_config_set_out_pins(&c, pin, 1);
     sm_config_set_out_shift(&c, false, true, 32);
     sm_config_set_sideset_pins(&c, side_pin);
-    pio_gpio_init(pio, pin);
-    ; pio_gpio_init(pio, side_pin);
-    ; pio_gpio_init(pio, side_pin + 1);
-    pio_sm_set_consecutive_pindirs(pio, sm, pin, 1, true);
-    pio_sm_set_consecutive_pindirs(pio, sm, side_pin, 2, true);
-    ; pio_sm_set_out_pins(pio, sm, side_pin, true);
-    ; pio_sm_set_out_pins(pio, sm, side_pin + 1, true);
+    // pio_gpio_init(pio, pin);
+    // pio_gpio_init(pio, side_pin);
+    // pio_gpio_init(pio, side_pin + 1);
+    // pio_sm_set_consecutive_pindirs(pio, sm, pin, 1, true);
+    // pio_sm_set_consecutive_pindirs(pio, sm, side_pin, 2, true);
+    // pio_sm_set_out_pins(pio, sm, side_pin, true);
+    // pio_sm_set_out_pins(pio, sm, side_pin + 1, true);
     pio_sm_set_pins(pio, sm, 0);
-    sm_config_set_fifo_join(&c, PIO_FIFO_JOIN_TX);
+    // sm_config_set_fifo_join(&c, PIO_FIFO_JOIN_TX);
     pio_sm_init(pio, sm, offset, &c);
     pio_sm_set_enabled(pio, sm, true);
-    pio_sm_exec(pio, sm, pio_encode_jmp(offset + test_offset_entry_point));
+    // pio_sm_exec(pio, sm, pio_encode_jmp(offset + test_offset_entry_point));
 }
 %}
