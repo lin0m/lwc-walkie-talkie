@@ -36,6 +36,6 @@ target_link_libraries(micTest
 
 pico_add_extra_outputs(micTest)
 
-pico_generate_pio_header(micTest ${CMAKE_CURRENT_LIST_DIR}/min.pio)
+pico_generate_pio_header(micTest ${CMAKE_CURRENT_LIST_DIR}/mic.pio)
 target_sources(micTest PRIVATE micTest.c)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
