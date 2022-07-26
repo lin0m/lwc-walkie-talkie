@@ -29,16 +29,20 @@ int main()
     while (true) {
         absolute_time_t current = get_absolute_time();
         while (absolute_time_diff_us(current, get_absolute_time()) < (int64_t)((C_PERIOD_MS / 2) * 1000)) {
-            pio_sm_put_blocking(pio, sm, ((MAX_VALUE_I2S << 16u | MAX_VALUE_I2S)));
-            printf("Sending positive %X\n", (MAX_VALUE_I2S << 16u | MAX_VALUE_I2S));
+            int32_t left = MAX_VALUE_I2S << 16u;
+            int32_t right = MAX_VALUE_I2S & 0x0000FFFF;
+            pio_sm_put_blocking(pio, sm, (left | right));
+            // printf("Sending positive %X\n", (left | right));
         //     pio_sm_put_blocking(pio, sm, ((MAX_VALUE_I2S / 2)));
         }
             // pio_sm_put_blocking(pio, sm, ((MAX_VALUE_I2S << 16u)));
             // sleep_ms(C_PERIOD_MS / 2);
         current = get_absolute_time();
         while (absolute_time_diff_us(current, get_absolute_time()) < (int64_t)((C_PERIOD_MS / 2) * 1000)) {
-            pio_sm_put_blocking(pio, sm, -((MAX_VALUE_I2S) << 16u) | (-MAX_VALUE_I2S));
-            printf("Sending negative %X\n", -((MAX_VALUE_I2S) << 16u) | (-MAX_VALUE_I2S));
+            int32_t left = -(MAX_VALUE_I2S << 16u);
+            int right = -MAX_VALUE_I2S & 0x0000FFFF;
+            pio_sm_put_blocking(pio, sm, (left | right));
+            // printf("Sending positive %X\n", (left | right));
         //     pio_sm_put_blocking(pio, sm, (-((MAX_VALUE_I2S / 2))));
         }
             // pio_sm_put_blocking(pio, sm, -(((MAX_VALUE_I2S) / 2)) << 16u | -((MAX_VALUE_I2S) / 2));
