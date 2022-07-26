@@ -23,7 +23,7 @@ add_executable(pioTest pioTest.c)
 pico_set_program_name(pioTest "pioTest")
 pico_set_program_version(pioTest "0.1")
 
-pico_enable_stdio_uart(pioTest 1)
+pico_enable_stdio_uart(pioTest 0)
 pico_enable_stdio_usb(pioTest 1)
 
 # Add the standard library to the build
