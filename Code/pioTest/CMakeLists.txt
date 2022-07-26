@@ -7,7 +7,7 @@ set(CMAKE_CXX_STANDARD 17)
 
 # Initialise pico_sdk from installed location
 # (note this can come from environment, CMake cache etc)
-set(PICO_SDK_PATH "/home/russell/Downloads/pico-sdk")
+set(PICO_SDK_PATH "${CMAKE_CURRENT_LIST_DIR}../../../../pico-sdk")
 
 # Pull in Raspberry Pi Pico SDK (must be before project)
 include(pico_sdk_import.cmake)
@@ -23,7 +23,7 @@ add_executable(pioTest pioTest.c)
 pico_set_program_name(pioTest "pioTest")
 pico_set_program_version(pioTest "0.1")
 
-pico_enable_stdio_uart(pioTest 1)
+pico_enable_stdio_uart(pioTest 0)
 pico_enable_stdio_usb(pioTest 1)
 
 # Add the standard library to the build

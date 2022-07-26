@@ -12,5 +12,8 @@
     "buildTarget" : {
       "visibility": "hidden"
                },
-     },
+    },
+    "files.associations": {
+      "test.pio.h": "c"
+    },
 }
