@@ -1,15 +1,16 @@
 .program test
 ; input data totaling 32 bytes - 16 for each channel and the program should work
 ; let side 0 be the wsel, side 1 be the clock/bck
+    ; problem: side 0 is bclk, side 1 is wsel
 .side_set 2
 ; need to set channel, then one bit of data, then bck, then repeat
 ; low means begin reading a bit
 ; I believe the wsel determines the size of the data in and must be used
-; example code from pico-extras says it needs autopull, not sure why
+; example code from pico-extras says it needs autopull
 ; should note that this code is basically the same as the pico-extras - it's pretty optimized already, using all side sets available for each instruction. The only change is the label, which specify which channel is being used instead of a vague "bitloop0"
 
 ; set the wsel to left channel, need to be set one cycle before data
-; value set to 14 because first out is not counted and last out is not counted
+; value set to 14 because first out can be considered the previous bit before wsel changed and last out outside of loop
 ; set x, 14 side 0b11
 ; loop:
 set x, 14 side 0b11
@@ -39,15 +40,15 @@ loopL:
 #include "hardware/clocks.h"
 static inline void test_program_init(PIO pio, uint sm, uint offset, uint pin, uint side_pin) {
     pio_sm_config c = test_program_get_default_config(offset);
-    float div = (clock_get_hz(clk_sys)) / (32/((float)1/44100));
-    sm_config_set_clkdiv(&c, div);
-    sm_config_set_out_pins(&c, pin, 1);
-    sm_config_set_out_shift(&c, false, true, 32);
-    sm_config_set_fifo_join(&c, PIO_FIFO_JOIN_TX);
-    sm_config_set_sideset_pins(&c, side_pin);
     pio_gpio_init(pio, pin);
     pio_gpio_init(pio, side_pin);
     pio_gpio_init(pio, side_pin + 1);
+    float div = (clock_get_hz(clk_sys)) / (32/((float)1/44100));
+    sm_config_set_clkdiv(&c, div);
+    sm_config_set_out_pins(&c, pin, 1);
+    sm_config_set_sideset_pins(&c, side_pin);
+    sm_config_set_out_shift(&c, false, true, 32);
+    sm_config_set_fifo_join(&c, PIO_FIFO_JOIN_TX);
     pio_sm_init(pio, sm, offset, &c);
     uint pin_mask = (1u << pin) | (3u << side_pin);
     pio_sm_set_pindirs_with_mask(pio, sm, pin_mask, pin_mask);
