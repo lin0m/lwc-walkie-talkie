@@ -27,7 +27,6 @@ void sendTimer(const int16_t MAX_VALUE_I2S, const double C_PERIOD_MS, PIO pio, u
 {
     int32_t right = (MAX_VALUE_I2S << 16u) & 0xFFFF0000;
     int32_t left = MAX_VALUE_I2S & 0x0000FFFF;
-    left = 0x00000000;
     uint32_t leftRightData = (uint32_t)right | (uint32_t)left;
     // pio_sm_put_blocking(pio, sm, leftRightData);
     // sleep_ms(C_PERIOD_MS / 2);
@@ -44,7 +43,6 @@ void sendTimer(const int16_t MAX_VALUE_I2S, const double C_PERIOD_MS, PIO pio, u
     }
     right = -((MAX_VALUE_I2S << 16u) & 0xFFFF0000);
     left = -MAX_VALUE_I2S & 0x0000FFFF;
-    left = 0x00000000;
     leftRightData = (uint32_t)right | (uint32_t)left;
     // pio_sm_put_blocking(pio, sm, leftRightData);
     // sleep_ms(C_PERIOD_MS / 2);
