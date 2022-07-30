@@ -23,7 +23,7 @@ add_executable(micTest micTest.c)
 pico_set_program_name(micTest "micTest")
 pico_set_program_version(micTest "0.1")
 
-pico_enable_stdio_uart(micTest 1)
+pico_enable_stdio_uart(micTest 0)
 pico_enable_stdio_usb(micTest 1)
 
 # Add the standard library to the build
