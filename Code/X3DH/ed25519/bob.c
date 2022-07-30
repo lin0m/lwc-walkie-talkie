@@ -47,9 +47,7 @@ int main() {
     ed25519_create_keypair(spk_public_key, spk_private_key, seed);
 
     //TODO: Will need to remove the message and message_len from this function. As of now keeping it. 
-    const unsigned char message[] = "Hey Alice, it's me Bob!";
-    const int message_len = strlen((char*) message);
-    ed25519_sign(spk_signature, message, message_len, id_public_key, id_private_key);
+    ed25519_sign(spk_signature, id_public_key, id_private_key);
 
     //Send to Server:
     SendtoServer(id_public_key,spk_public_key,spk_signature);

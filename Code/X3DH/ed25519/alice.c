@@ -25,7 +25,7 @@ int main() {
     unsigned char id_public_key[32], id_private_key[64], seed[32], scalar[32];
     unsigned char ephemeral_public_key[32];
     unsigned char ephemeral_private_key[64]; 
-    const unsigned char message[] = "Hey Alice, it's me Bob!";
+    const unsigned char message[] = "Hey Bob, this is Alice!";
     const int message_len = strlen((char*) message);
     unsigned char dh1[32], dh2[32], dh3[32];
 
