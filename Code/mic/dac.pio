@@ -1,0 +1,58 @@
+.program dac
+; input data totaling 32 bytes - 16 for each channel and the program should work
+; let side 0 be the wsel, side 1 be the clock/bck
+    ; problem: side 0 is bclk, side 1 is wsel
+.side_set 2
+; need to set channel, then one bit of data, then bck, then repeat
+; low means begin reading a bit
+; I believe the wsel determines the size of the data in and must be used
+; example code from pico-extras says it needs autopull
+; should note that this code is basically the same as the pico-extras - it's pretty optimized already, using all side sets available for each instruction. The only change is the label, which specify which channel is being used instead of a vague "bitloop0"
+
+; set the wsel to left channel, need to be set one cycle before data
+; value set to 14 because first out can be considered the previous bit before wsel changed and last out outside of loop
+; set x, 14 side 0b11
+; loop:
+set x, 14 side 0b11
+loopR:
+    ; needs to happen 16 times - corresponding to data in size
+    out pins, 1 side 0b10
+    jmp x-- loopR side 0b11
+    ; set the wsel to left channel, then send last bit
+    out pins, 1 side 0b00
+    set x, 14 side 0b01
+loopL:
+    ; needs to happen 16 times - corresponding to data in size
+    out pins, 1 side 0b00
+    ; set the wsel to right channel, then send last bit
+    jmp x--, loopL side 0b01
+    out pins, 1 side 0b10
+; public entry_point:
+; out_shift, second parameter sets shift direction (msb first)
+; also the clock pin can be set to an arbitrary gp pin by adding a parameter and using it as the sideset_pins base
+; if the clock is causing problems, use sm_config_set_clkdiv(&c, <value>)
+    ; problems could be caused by excessive waiting, as mentioned before and making sure that the clock is evenly distributed in terms of time should resolve the problems
+    ; note that the example code doesn't configure the clock in the pio portion and instead configures it outside, in C
+    ; it seems to allow dynamic audio frequencies that way
+    ; ideally the clock divider value (88) should be programmed in by getting the clock speed automatically
+
+% c-sdk {
+#include "hardware/clocks.h"
+static inline void dac_program_init(PIO pio, uint sm, uint offset, uint pin, uint side_pin) {
+    pio_sm_config c = dac_program_get_default_config(offset);
+    pio_gpio_init(pio, pin);
+    pio_gpio_init(pio, side_pin);
+    pio_gpio_init(pio, side_pin + 1);
+    float div = (clock_get_hz(clk_sys)) / (32/((float)1/44100));
+    sm_config_set_clkdiv(&c, div);
+    sm_config_set_out_pins(&c, pin, 1);
+    sm_config_set_sideset_pins(&c, side_pin);
+    sm_config_set_out_shift(&c, false, true, 32);
+    sm_config_set_fifo_join(&c, PIO_FIFO_JOIN_TX);
+    pio_sm_init(pio, sm, offset, &c);
+    uint pin_mask = (1u << pin) | (3u << side_pin);
+    pio_sm_set_pindirs_with_mask(pio, sm, pin_mask, pin_mask);
+    pio_sm_set_pins(pio, sm, 0);
+    pio_sm_set_enabled(pio, sm, true);
+}
+%}
