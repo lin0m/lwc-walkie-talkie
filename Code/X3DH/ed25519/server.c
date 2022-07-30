@@ -22,7 +22,9 @@ void SendToAlice(unsigned char *id_public_key, unsigned char *spk_public_key, un
 
 int main(){
     //Defining Bob's public key, Bob's
-    unsigned char id_public_key[32], unsigned char spk_public_key[32], unsigned char spk_signature[64];
+    unsigned char id_public_key[32];
+    unsigned char spk_public_key[32];
+    unsigned char spk_signature[64];
     ReceiveFromBob(id_public_key, spk_public_key, spk_signature);
     SendToAlice(id_public_key, spk_public_key, spk_signature);
 }
