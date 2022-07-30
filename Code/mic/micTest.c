@@ -32,17 +32,18 @@ int main()
     PIO pio = pio0;
     uint offset = pio_add_program(pio, &mic_program);
     uint sm = pio_claim_unused_sm(pio, true);
-    mic_program_init(pio, sm, offset, 18, 12);
+    mic_program_init(pio, sm, offset, 18, 10);
+    uint32_t lrData;
     printf("program initialized\n");
-    size_t size = 0;
+    // size_t size = 0;
     // provide half a second of buffer
-    const size_t CAPACITY = 44100 / 2;
-    uint32_t buffer[CAPACITY];
+    // const size_t CAPACITY = 44100 / 2;
+    // uint32_t buffer[CAPACITY];
     while (true)
     {
-        uint32_t lrData;
         lrData = pio_sm_get_blocking(pio, sm);
-        printf("data is: %032X\t", lrData);
+        printf("data is: %08X\n", lrData);
+        sleep_ms(10);
         // if unsuccessful, wait until buffer is not full
         // if (!addArray(lrData, buffer, &size, CAPACITY))
         // {
