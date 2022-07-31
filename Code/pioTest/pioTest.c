@@ -5,24 +5,6 @@
 // TODO: functions for different output modes
 // TODO: different configurations in pio
 // TODO: more debug info?
-void sendLoop(const int16_t MAX_VALUE_I2S, const double C_PERIOD_MS, PIO pio, uint sm)
-{
-    int32_t right = (MAX_VALUE_I2S << 16u) & 0xFFFF0000;
-    int32_t left = MAX_VALUE_I2S & 0x0000FFFF;
-    const double SAMPLING_PERIOD_MS = (double)1 / 44100 * 1000;
-    for (size_t i = 0; i < (size_t)((C_PERIOD_MS / SAMPLING_PERIOD_MS) / 2); i++)
-    {
-        pio_sm_put_blocking(pio, sm, (right | left));
-        printf("Sending positive %X\n", (right | left));
-    }
-    right = -((MAX_VALUE_I2S << 16u) & 0xFFFF0000);
-    left = -MAX_VALUE_I2S & 0x0000FFFF;
-    for (size_t i = 0; i < (size_t)((C_PERIOD_MS / SAMPLING_PERIOD_MS) / 2); i++)
-    {
-        pio_sm_put_blocking(pio, sm, (right | left));
-        printf("Sending negative %X\n", (right | left));
-    }
-}
 void sendTimer(const int16_t MAX_VALUE_I2S, const double C_PERIOD_MS, PIO pio, uint sm)
 {
     int32_t right = (MAX_VALUE_I2S << 16u) & 0xFFFF0000;
