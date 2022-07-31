@@ -58,7 +58,14 @@ void sendTimer(const int16_t MAX_VALUE_I2S, const double C_PERIOD_MS, PIO pio, u
         *current = get_absolute_time();
     }
 }
-
+bool printTimer(absolute_time_t* current, int64_t waitTime_us) {
+    if (absolute_time_diff_us(*current, get_absolute_time()) > waitTime_us)
+    {
+        return true;
+    } else {
+        return false;
+    }
+}
 int main()
 {
     stdio_init_all();
@@ -87,17 +94,17 @@ int main()
     const int16_t MAX_VALUE_I2S = (32767);
     const double C_PERIOD_MS = ((double)1 / 261.63) * 1000;
     absolute_time_t current = get_absolute_time();
+    absolute_time_t printCurrent = get_absolute_time();
+
     while (true)
     {
         sendTimer(MAX_VALUE_I2S, C_PERIOD_MS, pio_dac, sm_dac, &current);
         lrData = pio_sm_get_blocking(pio, sm);
-        printf("data is: %X\n", lrData);
-        // sleep_ms(10);
-        // if unsuccessful, wait until buffer is not full
-        // if (!addArray(lrData, buffer, &size, CAPACITY))
-        // {
-        //     sleep_ms(1);
-        // }
+        if (printTimer(&printCurrent, 10)) {
+            printf("data is: %X\n", lrData);
+            printCurrent = get_absolute_time();
+        }
     }
+        
     return 0;
 }
