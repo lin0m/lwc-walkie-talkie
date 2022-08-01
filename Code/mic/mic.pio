@@ -2,40 +2,41 @@
 ; input data totaling 32 bytes - 16 for each channel and the program should work
 ; let side 1 be the wsel, side 0 be the clock/bck
 .side_set 2
-set x, 30 side 0b11
+set x, 30 side 0b10
 loopR:
     ; needs to happen 32 times - corresponding to data in size
-    in pins, 1 side 0b10
-    jmp x-- loopR side 0b11
+    in pins, 1 side 0b11
+    jmp x-- loopR side 0b10
     ; set the wsel to left channel and send last bit
-    in pins, 1 side 0b00
-    set x, 30 side 0b01
+    in pins, 1 side 0b01
+    set x, 30 side 0b00
 loopL:
     ; needs to happen 32 times - corresponding to data in size
-    nop side 0b00
+    in pins, 1 side 0b01
     ; set the wsel to right channel and send last bit
-    jmp x--, loopL side 0b01
-    nop side 0b10
+    jmp x--, loopL side 0b00
+    in pins, 1 side 0b11
 ; data now enters the input shift register (isr) which should autopush into the receive (rx) fifo at 64 bits
 
 % c-sdk {
 #include "hardware/clocks.h"
 static inline void mic_program_init(PIO pio, uint sm, uint offset, uint pin, uint side_pin) {
     pio_sm_config c = mic_program_get_default_config(offset);
-    pio_gpio_init(pio, pin);
-    pio_gpio_init(pio, side_pin);
-    pio_gpio_init(pio, side_pin + 1);
     float div = (clock_get_hz(clk_sys)) / (32/((float)1/44100));
     sm_config_set_clkdiv(&c, div);
-    sm_config_set_in_pins(&c, pin);
     sm_config_set_sideset_pins(&c, side_pin);
     sm_config_set_in_shift(&c, false, true, 32);
     sm_config_set_fifo_join(&c, PIO_FIFO_JOIN_RX);
-    pio_sm_init(pio, sm, offset, &c);
     uint pin_dir_mask = (0u << pin) | (3u << side_pin);
     uint pin_apply_mask = (1u << pin) | (3u << side_pin);
     pio_sm_set_pindirs_with_mask(pio, sm, pin_dir_mask, pin_apply_mask);
-    pio_sm_set_pins(pio, sm, 0);
+    pio_sm_set_in_pins(pio, sm, pin);
+    sm_config_set_in_pins(&c, pin);
+    // pio_gpio_init(pio, pin);
+    pio_gpio_init(pio, side_pin);
+    pio_gpio_init(pio, side_pin + 1);
+    // pio_sm_set_pins(pio, sm, 0);
+    pio_sm_init(pio, sm, offset, &c);
     pio_sm_set_enabled(pio, sm, true);
 }
 %}

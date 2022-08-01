@@ -2,7 +2,7 @@
 #include "pico/stdlib.h"
 #include "hardware/pio.h"
 #include "mic.pio.h"
-#include "dac.pio.h"
+// #include "dac.pio.h"
 // /**
 //  * @brief this adds data to the end of a uint32_t array
 //  *
@@ -79,11 +79,11 @@ int main()
     uint sm = pio_claim_unused_sm(pio, true);
     mic_program_init(pio, sm, offset, 18, 26);
 
-    PIO pio_dac = pio1;
-    uint offset_dac = pio_add_program(pio_dac, &dac_program);
-    uint sm_dac = pio_claim_unused_sm(pio_dac, true);
-    dac_program_init(pio_dac, sm_dac, offset_dac, 13, 6);
-    uint32_t lrData;
+    // PIO pio_dac = pio1;
+    // uint offset_dac = pio_add_program(pio_dac, &dac_program);
+    // uint sm_dac = pio_claim_unused_sm(pio_dac, true);
+    // dac_program_init(pio_dac, sm_dac, offset_dac, 13, 6);
+    uint32_t lrData = 0;
     // const double MAX_FREQUENCY = (double)44100 / 2;
     // const double MAX_PERIOD = 1 / MAX_FREQUENCY;
     // const double MAX_PERIOD_US = MAX_PERIOD * 1000000;
@@ -91,17 +91,23 @@ int main()
     // provide half a second of buffer
     // const size_t CAPACITY = 44100 / 2;
     // uint32_t buffer[CAPACITY];
-    const int16_t MAX_VALUE_I2S = (32767);
-    const double C_PERIOD_MS = ((double)1 / 261.63) * 1000;
-    absolute_time_t current = get_absolute_time();
+    // const int16_t MAX_VALUE_I2S = (32767);
+    // const double C_PERIOD_MS = ((double)1 / 261.63) * 1000;
+    // absolute_time_t current = get_absolute_time();
     absolute_time_t printCurrent = get_absolute_time();
 
+    pio_sm_set_enabled(pio, sm, false);
+    pio_sm_clear_fifos(pio, sm);
+    pio_sm_restart(pio, sm);
+    pio_sm_set_enabled(pio, sm, true);
     while (true)
     {
-        sendTimer(MAX_VALUE_I2S, C_PERIOD_MS, pio_dac, sm_dac, &current);
+        // sendTimer(MAX_VALUE_I2S, C_PERIOD_MS, pio_dac, sm_dac, &current);
         lrData = pio_sm_get_blocking(pio, sm);
-        if (printTimer(&printCurrent, 10)) {
-            printf("data is: %X\n", lrData);
+        if (printTimer(&printCurrent, 10*1000)) {
+            if (lrData > 0) {
+                printf("data is: %d\t%x\n", lrData, lrData);
+            }
             printCurrent = get_absolute_time();
         }
     }
