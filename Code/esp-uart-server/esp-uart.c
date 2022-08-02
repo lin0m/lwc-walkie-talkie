@@ -84,7 +84,7 @@ int main()
         uart_puts(UART_ID1, currentString);
     }
     sleep_ms(10000);
-    uart_puts(UART_ID, "AT+CIPSERVER=1\r\n");
+    uart_puts(UART_ID, "AT+CIPSERVER=1,2399\r\n");
     while (!waitUntilReady(currentString, 80)) {
         uart_puts(UART_ID1, currentString);
         printf(currentString);
