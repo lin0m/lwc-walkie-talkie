@@ -1,4 +1,3 @@
-// This is a mess so we need to fix it but "it works"
 #include <stdio.h>
 #include <string.h>
 #include "encrypt.c"
