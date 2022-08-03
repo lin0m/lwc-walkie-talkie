@@ -37,6 +37,7 @@ static inline void mic_program_init(PIO pio, uint sm, uint offset, uint pin, uin
     // pio_gpio_init(pio, pin);
     pio_gpio_init(pio, side_pin);
     pio_gpio_init(pio, side_pin + 1);
+    gpio_pull_down(pin);
     // pio_sm_set_pins(pio, sm, 0);
     pio_sm_init(pio, sm, offset, &c);
     pio_sm_set_enabled(pio, sm, true);
