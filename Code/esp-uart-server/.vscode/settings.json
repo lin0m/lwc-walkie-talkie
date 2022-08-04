@@ -1,0 +1,9 @@
+{
+    "files.associations": {
+        "esphelper.h": "c",
+        "stdlib.h": "c",
+        "uart.h": "c",
+        "stdio.h": "c",
+        "string.h": "c"
+    }
+}
