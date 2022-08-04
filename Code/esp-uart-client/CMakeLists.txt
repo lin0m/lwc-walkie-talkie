@@ -32,3 +32,10 @@ target_link_libraries(esp-uart-client pico_stdlib)
 
 pico_add_extra_outputs(esp-uart-client)
 
+# link external library espHelper
+# steps: add the directory with CMakeLists.txt, then link it to the main project, then include any extra libraries required by the library being added, then attach the include directory to the library being added
+add_subdirectory(../include/espHelper/src espHelper)
+target_link_libraries(esp-uart-client espHelper)
+target_link_libraries(espHelper pico_stdlib)
+target_include_directories(espHelper PUBLIC "../include/espHelper/src")
+pico_enable_stdio_usb(espHelper 1)

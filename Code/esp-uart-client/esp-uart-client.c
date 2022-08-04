@@ -2,7 +2,7 @@
 #include <string.h>
 #include "pico/stdlib.h"
 #include "hardware/uart.h"
-
+#include "espHelper.h"
 #define UART_ID uart1
 #define BAUD_RATE 115200
 #define UART_ID1 uart0
@@ -12,38 +12,6 @@
 #define UART_TX_PIN1 0
 #define UART_RX_PIN1 1
 
-/**
- * @brief send a command, then loop this with the same command until it exits, then send another command
- * 
- * @param currentString 
- * @param length 
- * @return true no error
- * @return false error
- */
-bool waitUntilReady(char* currentString, const size_t length) {
-    char input = ' ';
-    strcpy(currentString, "");
-    char* resultOK = NULL;
-    char* resultERROR = NULL;
-    while (resultOK == NULL && resultERROR == NULL) {
-        resultOK = strstr(currentString, "OK");
-        resultERROR = strstr(currentString, "ERROR");
-        input = uart_getc(UART_ID);
-        strncat(currentString, &input, 1);
-        // printf(currentString);
-        // if input is too long, reset the string
-        if (strlen(currentString) >= length) {
-            strcpy(currentString, "");
-        }
-    }
-    if (resultERROR != NULL) {
-        // strcpy(currentString, "");
-        return false;
-    } else if (resultOK != NULL) {
-        // strcpy(currentString, "");
-        return true;
-    }
-}
 int main()
 {
     stdio_init_all();
@@ -56,38 +24,38 @@ int main()
     char currentString[256] = "";
     // char temp[80] = "";
     uart_puts(UART_ID, "AT+CWMODE=1\r\n");
-    while (!waitUntilReady(currentString, 256)) {
+    while (!waitUntilReady(currentString, 256, UART_ID)) {
         uart_puts(UART_ID, "AT+CWMODE=1\r\n");
         printf(currentString);
     }
     sleep_ms(10000);
     printf("connecting to wifi");
     uart_puts(UART_ID, "AT+CWJAP=\"expressif\",\"1234567890\"\r\n");
-    while (!waitUntilReady(currentString, 256)) {
+    while (!waitUntilReady(currentString, 256, UART_ID)) {
         uart_puts(UART_ID, "AT+CWJAP=\"expressif\",\"1234567890\"\r\n");
         printf(currentString);
     }
     printf("requesting ip info");
     uart_puts(UART_ID, "AT+CIPSTA?\r\n");
-    while (!waitUntilReady(currentString, 256)) {
+    while (!waitUntilReady(currentString, 256, UART_ID)) {
         uart_puts(UART_ID, "AT+CIPSTA?\r\n");
         printf(currentString);
     }
     printf(currentString);
     // change the ip based on the previous command output
     uart_puts(UART_ID, "AT+CIPSTART=\"TCP\",\"192.168.4.1\",333\r\n");
-    while (!waitUntilReady(currentString, 256)) {
+    while (!waitUntilReady(currentString, 256, UART_ID)) {
         uart_puts(UART_ID, "AT+CIPSTART=\"TCP\",\"192.168.4.1\",333\r\n");
         printf(currentString);
     }
 
     uart_puts(UART_ID, "AT+CIPSEND=4\r\n");
-    while (!waitUntilReady(currentString, 256)) {
+    while (!waitUntilReady(currentString, 256, UART_ID)) {
         uart_puts(UART_ID, "AT+CIPSEND=4\r\n");
         printf(currentString);
     }
     uart_puts(UART_ID, "test\r\n");
-    // while (!waitUntilReady(currentString, 256)) {
+    // while (!waitUntilReady(currentString, 256, UART_ID)) {
     //     uart_puts(UART_ID, "AT+CIPSEND=4\r\n");
     // }
     
