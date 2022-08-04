@@ -83,6 +83,7 @@ int main()
     uint offset_dac = pio_add_program(pio_dac, &dac_program);
     uint sm_dac = pio_claim_unused_sm(pio_dac, true);
     dac_program_init(pio_dac, sm_dac, offset_dac, 13, 6);
+    int32_t lrDataFull = 0;
     int32_t lrData = 0;
     // const double MAX_FREQUENCY = (double)44100 / 2;
     // const double MAX_PERIOD = 1 / MAX_FREQUENCY;
@@ -103,11 +104,11 @@ int main()
     while (true)
     {
         // sendTimer(MAX_VALUE_I2S, C_PERIOD_MS, pio_dac, sm_dac, &current);
-        lrData = pio_sm_get_blocking(pio, sm);
+        lrDataFull = pio_sm_get_blocking(pio, sm);
+        lrData = lrDataFull & 0xFFFF0000;
         pio_sm_put_blocking(pio_dac, sm_dac, lrData / 1024);
-        // lrData <<= 14;
-        if (printTimer(&printCurrent, 10*1000)) {
-            // printf("data is: %d\t%08X\n", lrData, lrData);
+        if (printTimer(&printCurrent, 100*1000)) {
+            printf("data is: %d\t%08X\n", lrDataFull, lrDataFull);
             printCurrent = get_absolute_time();
         }
     }
