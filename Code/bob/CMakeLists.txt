@@ -42,3 +42,8 @@ target_link_libraries(bob
 
 pico_add_extra_outputs(bob)
 
+add_subdirectory(../include/espHelper/src espHelper)
+target_link_libraries(bob espHelper)
+target_link_libraries(espHelper pico_stdlib)
+target_include_directories(espHelper PUBLIC "../include/espHelper/src")
+pico_enable_stdio_usb(espHelper 1)

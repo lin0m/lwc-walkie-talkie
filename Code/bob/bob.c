@@ -5,12 +5,24 @@
     #include "hardware/pio.h"
 #endif
 #include "crypto_aead.h"
+#include "espHelper.h"
+
+#define UART_ID uart1
+#define BAUD_RATE 115200
+#define UART_TX_PIN 4
+#define UART_RX_PIN 5
+
 
 int main(void){
     // stdio_init_all();
     #ifdef USE_PICO
         stdio_init_all();
+        uart_init(UART_ID, BAUD_RATE);
+        gpio_set_function(UART_TX_PIN, GPIO_FUNC_UART);
+        gpio_set_function(UART_RX_PIN, GPIO_FUNC_UART);
+
     #endif
+
     /*
     Count = 35
     Key = 000102030405060708090A0B0C0D0E0F
@@ -20,6 +32,38 @@ int main(void){
     CT = A175D5B5C1EE4A0FA1
     */
 
+    char currentString[256] = "";
+    #ifdef USE_PICO
+        uart_puts(UART_ID, "AT+CWMODE=1\r\n");
+        while (!waitUntilReady(currentString, 256, UART_ID)) {
+            uart_puts(UART_ID, "AT+CWMODE=1\r\n");
+            printf(currentString);
+        }
+        printf("connecting to wifi");
+        uart_puts(UART_ID, "AT+CWJAP=\"expressif\",\"1234567890\"\r\n");
+        while (!waitUntilReady(currentString, 256, UART_ID)) {
+            uart_puts(UART_ID, "AT+CWJAP=\"expressif\",\"1234567890\"\r\n");
+            printf(currentString);
+        }
+        printf("requesting ip info");
+        uart_puts(UART_ID, "AT+CIPSTA?\r\n");
+        while (!waitUntilReady(currentString, 256, UART_ID)) {
+            uart_puts(UART_ID, "AT+CIPSTA?\r\n");
+            printf(currentString);
+        }
+        // change the ip based on the previous command output
+        uart_puts(UART_ID, "AT+CIPSTART=\"TCP\",\"192.168.4.1\",2399\r\n");
+        while (!waitUntilReady(currentString, 256, UART_ID)) {
+            uart_puts(UART_ID, "AT+CIPSTART=\"TCP\",\"192.168.4.1\",2399\r\n");
+            printf(currentString);
+        }
+        uart_puts(UART_ID, "AT+CIPSEND=4\r\n");
+        while (!waitUntilReady(currentString, 256, UART_ID)) {
+            uart_puts(UART_ID, "AT+CIPSEND=4\r\n");
+            printf(currentString);
+        }
+        uart_puts(UART_ID, "test\r\n");
+    #endif
     // variables
     unsigned long long c_length = 80;
     unsigned char c[c_length];           // ciphertext
