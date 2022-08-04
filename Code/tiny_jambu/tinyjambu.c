@@ -4,15 +4,15 @@
 
 void encrypt();
 void decrypt();
-
+// variables
+const unsigned char m[] = {0x00};                                                   // plaintext
+const unsigned char c[] = {0xA1, 0x75, 0xD5, 0xB5, 0xC1, 0xEE, 0x4A, 0x0F, 0xA1};   // ciphertext
+const unsigned char k[] = {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F}; // 128-bit key
+    
 int main(void){
-    // variables
-    const unsigned char m[] = {0x00};                                                   // plaintext
-    const unsigned char c[] = {0xA1, 0x75, 0xD5, 0xB5, 0xC1, 0xEE, 0x4A, 0x0F, 0xA1};   // ciphertext
-    const unsigned char k[] = {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F}; // 128-bit key
     
     encrypt(m, k);
-    decrypt(c, k);
+    //decrypt(c, k);
     return 0;
 }
 void encrypt(const unsigned char* m, const unsigned char* k){
@@ -31,7 +31,7 @@ void encrypt(const unsigned char* m, const unsigned char* k){
 
     // print
     printf("Key = ");
-    for (int i = 0; i < sizeof(k); i++){
+    for (int i = 0; i < sizeof(k)*2; i++){
         printf("%02X", k[i]);
     }
     printf("\n");
