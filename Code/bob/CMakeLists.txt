@@ -25,8 +25,8 @@ add_executable(bob bob.c )
 pico_set_program_name(bob "bob")
 pico_set_program_version(bob "0.1")
 
-pico_enable_stdio_uart(bob 1)
-pico_enable_stdio_usb(bob 0)
+pico_enable_stdio_uart(bob 0)
+pico_enable_stdio_usb(bob 1)
 
 add_subdirectory(tinyJambu)
 target_include_directories(bob PUBLIC "${PROJECT_SOURCE_DIR}/tinyJambu")

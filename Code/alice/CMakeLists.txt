@@ -10,7 +10,7 @@ pico_sdk_init()
 
 pico_set_program_name(alice "alice")
 pico_set_program_version(alice "0.1")
-pico_enable_stdio_usb(alice 0)
+pico_enable_stdio_usb(alice 1)
 
 add_subdirectory(../include/dac dac)
 target_link_libraries(dac pico_stdlib)
