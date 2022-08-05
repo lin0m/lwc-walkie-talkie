@@ -18,11 +18,6 @@
  * https://github.com/PaulLaux/X3DH-Key-Exchange/blob/master/x3dh.cpp
  */
 
-void Encode(const unsigned char *value) {
-    //As per the signal protocol 
-    //https://stackoverflow.com/questions/73159050/create-an-encoding-function-for-a-32-byte-array-in-c-and-decode-too-from-a-pyth
-    //Convert the python encoding fn to C (not sure how to do it)
-};
 
 void SendtoServer(const unsigned char *id_public_key, unsigned char *spk_public_key, const unsigned char *spk_signature){};
 
@@ -49,10 +44,6 @@ int main() {
     unsigned char ad[32];
 
     unsigned char hex_hkdf_output[128]; 
-    uint8_t hkdf_output[128];
-
-    int ikm_len = sizeof(dh_final)/sizeof(unsigned char);
-    int okm_len = sizeof(hkdf_output)/sizeof(uint8_t);
 
     //Generating long-term Identity Key pair for Bob
     ed25519_create_seed(seed); //create randome seed
@@ -91,8 +82,8 @@ void get_shared_key(unsigned char *dh_final, SHAversion whichSha, const unsigned
     int info_len; // The length of optional context and application (ignored if info==NULL)
     int ikm_len; //The length of the input keying material
     uint8_t okm_integer[okm_len];
-    ikm_len = strlen(dh_final);
-
+    ikm_len = 96;
+    printf("%d\n", ikm_len);
     if(salt == NULL) salt_len = 0;
     if(info == NULL) info_len = 0;
 
