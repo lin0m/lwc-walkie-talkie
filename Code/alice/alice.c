@@ -153,8 +153,8 @@ int main(void)
     initDac(&pio, &sm);
     for (size_t i = 0; i < 44100 / 2; i += 5)
     {
-        lrData = result[i] << 24 | result[i + 1] << 16 | result[i + 3] << 8 | result[i + 3];
-        printf("%d\n", lrData);
+        lrData = result[i] << 24 | result[i + 1] << 16 | result[i + 2] << 8 | result[i + 3];
+        printf("data received is: %d\n", lrData);
         sendDac(pio, sm, lrData);
     }
 
