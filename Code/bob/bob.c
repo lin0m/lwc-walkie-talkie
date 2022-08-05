@@ -119,9 +119,15 @@ int main(void)
     PIO pio = pio0;
     uint sm;
     initMic(&pio, &sm);
-    for (size_t i = 0; i < 44100 / 2; i++)
+    int32_t sample;
+    for (size_t i = 0; i < 44100 / 2; i += 5)
     {
-        getSingleSampleBlocking(pio, sm);
+
+        sample = getSingleSampleBlocking(pio, sm);
+        currentString[i] = 0xFF000000 & sample;
+        currentString[i + 1] = 0x00FF0000 & sample;
+        currentString[i + 2] = 0x0000FF00 & sample;
+        currentString[i + 3] = 0x000000FF & sample;
     }
     char atSend[80] = "AT+CIPSEND=";
     // send half a second buffer for now; later change it to fit in tinyJambu
