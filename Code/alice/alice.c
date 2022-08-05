@@ -14,7 +14,7 @@
  * 5. Play the audio
  */
 
-void decrypt();
+void decrypt(const unsigned char* c, unsigned long long clen, const unsigned char* k);
 void ConnectToServer(){};
 void SendtoServer(const unsigned char *id_public_key, unsigned char *spk_public_key, const unsigned char *spk_signature, int message_type){};
 int ReceiveFromAlice(unsigned char *alice_identity_public_key, unsigned char *alice_ephemeral_public_key, unsigned char *initial_ciphertext, int message_type){};
@@ -80,34 +80,30 @@ int main(void){
 
     /*-----------------------------------DECRYPT AUDIO------------------------------------*/
     // variables
-    const unsigned char m[] = {0x00};                                                   // plaintext
     const unsigned char c[] = {0xA1, 0x75, 0xD5, 0xB5, 0xC1, 0xEE, 0x4A, 0x0F, 0xA1};   // ciphertext
-    // k - k is defined as hex_hkdf_output of length 128 bits. 
-    // const unsigned char k[] = {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F}; // 128-bit key 
-    decrypt(c, hex_hkdf_output);
+    unsigned long long clen = sizeof(c);                                                // ciphertext length pointer
+    const unsigned char k[] = {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F}; // 128-bit key
+    decrypt(c, clen, hex_hkdf_output);
 
     /*--------------------------------PLAY DECRYPTED AUDIO--------------------------------*/
 
     return 0;
 }
 
-void decrypt(const unsigned char* c, const unsigned char* k){
-    // const unsigned char c[] = {0xA1, 0x75, 0xD5, 0xB5, 0xC1, 0xEE, 0x4A, 0x0F, 0xA1}; // ciphertext
-    unsigned long long clen = sizeof(c);                            // ciphertext length pointer
-    unsigned long long m_length = 80;                                // plaintext length
+void decrypt(const unsigned char* c, unsigned long long clen, const unsigned char* k){
+    unsigned long long m_length = 80;                               // plaintext length
     unsigned char m[m_length];                                      // plaintext
     unsigned long long *mlen = &m_length;                           // plaintext length pointer
     const unsigned char ad[] = {0x00};                              // associated data
     unsigned long long adlen = sizeof(ad);                          // associated data length
     unsigned char *nsec;                                            // secret message number
-    const unsigned char npub[] = {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B};                      // public message number
-    // const unsigned char k[] = {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F}; // 128-bit key
+    const unsigned char npub[] = {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B};  // public message number
 
     crypto_aead_decrypt(m, mlen, nsec, c, clen, ad, adlen, npub, k);
 
     // print
     printf("Plaintext = ");
-    for (int i = 0; i < sizeof(m); i++){
+    for (int i = 0; i < m_length; i++){
         printf("%02X", m[i]);
     }
     printf("\n");
