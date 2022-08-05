@@ -151,11 +151,13 @@ int main(void)
     PIO pio = pio0;
     uint sm;
     initDac(&pio, &sm);
-    for (size_t i = 0; i < 44100 / 2; i += 5)
-    {
-        lrData = result[i] << 24 | result[i + 1] << 16 | result[i + 2] << 8 | result[i + 3];
-        printf("data received is: %d\n", lrData);
-        sendDac(pio, sm, lrData);
+    while (true) {
+        for (size_t i = 0; i < 44100 / 2; i += 5)
+        {
+            lrData = result[i] << 24 | result[i + 1] << 16 | result[i + 2] << 8 | result[i + 3];
+            printf("data received is: %d\n", lrData);
+            sendDac(pio, sm, lrData);
+        }
     }
 
     /*-----------------------------------DECRYPT AUDIO------------------------------------*/

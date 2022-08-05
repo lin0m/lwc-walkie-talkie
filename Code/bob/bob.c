@@ -120,34 +120,37 @@ int main(void)
     uint sm;
     initMic(&pio, &sm);
     int32_t sample;
-    for (size_t i = 0; i < (44100 - 4) / 2; i += 5)
+    while (true)
     {
 
-        sample = getSingleSampleBlocking(pio, sm);
-        currentString[i] = 0xFF000000 & sample;
-        currentString[i + 1] = 0x00FF0000 & sample;
-        currentString[i + 2] = 0x0000FF00 & sample;
-        currentString[i + 3] = 0x000000FF & sample;
-        printf("sample is: %X", sample);
+        for (size_t i = 0; i < (44100 - 4) / 2; i += 5)
+        {
 
-    }
-    char atSend[80] = "AT+CIPSEND=";
-    // send half a second buffer for now; later change it to fit in tinyJambu
-    size_t amount = 44100 / 2;
-    char amountChar[80];
-    sprintf(amountChar, "%llu", amount);
-    strcat(atSend, amountChar);
-    strcat(atSend, "\r\n");
-    uart_puts(UART_ID, atSend);
-    while (!waitUntilReady(currentString, 256, UART_ID))
-    {
+            sample = getSingleSampleBlocking(pio, sm);
+            currentString[i] = 0xFF000000 & sample;
+            currentString[i + 1] = 0x00FF0000 & sample;
+            currentString[i + 2] = 0x0000FF00 & sample;
+            currentString[i + 3] = 0x000000FF & sample;
+            printf("sample is: %X", sample);
+        }
+        char atSend[80] = "AT+CIPSEND=";
+        // send half a second buffer for now; later change it to fit in tinyJambu
+        size_t amount = 44100 / 2;
+        char amountChar[80];
+        sprintf(amountChar, "%llu", amount);
+        strcat(atSend, amountChar);
+        strcat(atSend, "\r\n");
         uart_puts(UART_ID, atSend);
-        printf(currentString);
+        while (!waitUntilReady(currentString, 256, UART_ID))
+        {
+            uart_puts(UART_ID, atSend);
+            printf(currentString);
+        }
+
+        // data goes here:
+
+        uart_puts(UART_ID, strcat(currentString, "\r\n"));
     }
-
-    // data goes here:
-
-    uart_puts(UART_ID, strcat(currentString, "\r\n"));
 
     const unsigned char m[] = {0x00};                                                                                           // plaintext
     unsigned long long mlen = sizeof(m);                                                                                        // plaintext length                                       // ciphertext
