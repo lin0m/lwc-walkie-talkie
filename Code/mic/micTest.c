@@ -106,8 +106,9 @@ int main()
         // sendTimer(MAX_VALUE_I2S, C_PERIOD_MS, pio_dac, sm_dac, &current);
         lrDataFull = pio_sm_get_blocking(pio, sm);
         lrData = lrDataFull & 0xFFFF0000;
+        lrDataFull >>= 14;
         pio_sm_put_blocking(pio_dac, sm_dac, lrData / 1024);
-        if (printTimer(&printCurrent, 100*1000)) {
+        if (printTimer(&printCurrent, 10*1000)) {
             printf("data is: %d\t%08X\n", lrDataFull, lrDataFull);
             printCurrent = get_absolute_time();
         }

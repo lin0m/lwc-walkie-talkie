@@ -6,6 +6,7 @@
 #endif
 #include "crypto_aead.h"
 #include "espHelper.h"
+#include "mic.pio.h"
 
 #define UART_ID uart1
 #define BAUD_RATE 115200
@@ -34,6 +35,7 @@ int main(void){
 
     char currentString[256] = "";
     #ifdef USE_PICO
+        // initialize esp client
         uart_puts(UART_ID, "AT+CWMODE=1\r\n");
         while (!waitUntilReady(currentString, 256, UART_ID)) {
             uart_puts(UART_ID, "AT+CWMODE=1\r\n");
@@ -57,9 +59,15 @@ int main(void){
             uart_puts(UART_ID, "AT+CIPSTART=\"TCP\",\"192.168.4.1\",2399\r\n");
             printf(currentString);
         }
-        uart_puts(UART_ID, "AT+CIPSEND=4\r\n");
+        char atSend[80] = "AT+CIPSEND=";
+        size_t amount = 0;
+        char amountChar[80];
+        sprintf(amountChar, "%llu", amount);
+        strcat(atSend, amountChar);
+        strcat(atSend, "\r\n");
+        uart_puts(UART_ID, atSend);
         while (!waitUntilReady(currentString, 256, UART_ID)) {
-            uart_puts(UART_ID, "AT+CIPSEND=4\r\n");
+            uart_puts(UART_ID, atSend);
             printf(currentString);
         }
         uart_puts(UART_ID, "test\r\n");

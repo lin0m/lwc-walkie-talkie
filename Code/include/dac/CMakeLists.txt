@@ -1,0 +1,12 @@
+cmake_minimum_required(VERSION 3.0.0)
+project(dac C CXX ASM)
+add_compile_options(-Wall -Wextra)
+set(PICO_SDK_PATH "${CMAKE_CURRENT_LIST_DIR}../../../../pico-sdk")
+include(pico_sdk_import.cmake)
+pico_sdk_init()
+link_libraries(pico_stdlib)
+link_libraries(hardware_pio)
+add_library(dac src/dac.c)
+pico_generate_pio_header(mic ${CMAKE_CURRENT_LIST_DIR}/src/mic.pio)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+

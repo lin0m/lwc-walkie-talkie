@@ -29,13 +29,11 @@ bool searchUARTOnce(char *key, char *currentString, size_t length, uart_inst_t *
 
 /**
  * @brief searches for a string once
- * @note the uart_ID paramter can be replaced with a char if the caller provides the character from uart
+ * @note this function removes the requirement on pico uart; append a new character outside the function
+ * This also allows searching multiple keys
  * @param key string to search
  * @param currentString string containing input from uart, will contain the key being searched
- * @param length capacity of uart string input
- * @param uart_ID uart instance to use
  * @return true - the key was found
- * @return false - the key wasn't found or length is too small
  */
 bool searchStringOnce(char *key, char *currentString)
 {
@@ -52,7 +50,7 @@ bool searchStringOnce(char *key, char *currentString)
 
 /**
  * @brief send a command, then loop this with the same command until it exits, then send another command
- *
+ * @note TODO the code should use searchStringOnce
  * @param currentString string to add characters to and check
  * @param length
  * @return true no error
@@ -96,7 +94,7 @@ bool waitUntilReady(char *currentString, const size_t length, uart_inst_t *uart_
  * @brief parses and gets the data from esp tcp server and returns the link ID
  *
  * @param uart_ID uart instance to get from
- * @param result the data from esp tcp server; cleared when used
+ * @param result the data from esp tcp server; cleared when function starts
  * @param resultCapacity capacity of result; unused for now
  * @return int - the link id, -1 if error
  */
