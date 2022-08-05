@@ -3,6 +3,8 @@
 #include "encrypt.c"
 #include "../X3DH/ed25519/src/ed25519.h"
 #include "../X3DH/rfc6234/sha.h"
+#include "espHelper.h"
+#include "dac.h"
 
 /**
  * This code is for Alice (Bob in the case of X3DH)
@@ -13,7 +15,6 @@
  * 4. Decrypt the audio
  * 5. Play the audio
  */
-
 void decrypt(const unsigned char* c, unsigned long long clen, const unsigned char* k);
 void ConnectToServer(){};
 void SendtoServer(const unsigned char *id_public_key, unsigned char *spk_public_key, const unsigned char *spk_signature, int message_type){};
@@ -22,8 +23,76 @@ void get_dh_output(unsigned char* alice_identity_public_key, unsigned char* spk_
                     unsigned char* alice_ephemeral_public_key, unsigned char* dh_final);
 void get_shared_key(unsigned char *dh_final, SHAversion whichSha, const unsigned char *salt_len, const unsigned char *info,
                     unsigned char* output_key, int okm_len);
+void createServer() {
+    initEsp();
+    uart_puts(UART_ID, "AT+CWMODE=2\r\n");
+    char currentString[256] = "test";
+    for (size_t i = 0; i < 10; i++)
+    {
+        printf("%d\n", i);
+        sleep_ms(1000);
+    }
+    printf("setting ap mode\n");
+    while (!waitUntilReady(currentString, 256, UART_ID))
+    {
+        uart_puts(UART_ID, "AT+CWMODE=2\r\n");
+    }
+    printf("%s\n", currentString);
+    printf("enabling multiple connections\n");
+    uart_puts(UART_ID, "AT+CIPMUX=1\r\n");
+    while (!waitUntilReady(currentString, 256, UART_ID))
+    {
+        printf("%s\n", currentString);
+        uart_puts(UART_ID, "AT+CIPMUX=1\r\n");
+    }
+    printf("%s\n", currentString);
+    printf("setting wifi ssid and password\n");
+    uart_puts(UART_ID, "AT+CWSAP=\"expressif\",\"1234567890\",5,3\r\n");
+    while (!waitUntilReady(currentString, 256, UART_ID))
+    {
+        uart_puts(UART_ID, "AT+CWSAP=\"expressif\",\"1234567890\",5,3\r\n");
+    }
+    printf("%s\n", currentString);
+    for (size_t i = 0; i < 10; i++)
+    {
+        printf("%d\n", i);
+        sleep_ms(1000);
+    }
+    printf("enabling tcpip server\n");
+    uart_puts(UART_ID, "AT+CIPSERVER=1,2399\r\n");
+    while (!waitUntilReady(currentString, 256, UART_ID))
+    {
+        uart_puts(UART_ID, "AT+CIPSERVER=1,2399\r\n");
+        printf(currentString);
+    }
+    printf("%s\n", currentString);
+    printf("getting ip information\n");
+    uart_puts(UART_ID, "AT+CIPAP?\r\n");
+    while (!waitUntilReady(currentString, 256, UART_ID))
+    {
+        uart_puts(UART_ID, "AT+CIPAP?\r\n");
+        printf(currentString);
+    }
+    printf("%s\n", currentString);
+    printf("waiting for connect\n");
+    strcpy(currentString, "");
+    char input = uart_getc(UART_ID);
+    while (!searchStringOnce("CONNECT", currentString))
+    {
+        strncat(currentString, &input, 1);
+        input = uart_getc(UART_ID);
+    }
+    strcpy(currentString, "");
+    printf("Connected successfully");
+    while (true)
+    {
+        getTCPEsp(UART_ID, currentString, 256);
+        printf("%s", currentString);
+    }
 
+}
 int main(void){
+    
     /*--------------------------------DEFINING VARIABLES FOR X3DH--------------------------*/
     unsigned char id_public_key[32]; //Bob's Identity Public Key
     unsigned char id_private_key[64]; //Bob's Identity Private Key
@@ -77,6 +146,20 @@ int main(void){
     /*------LOOP "LISTEN TO SERVER" &"DECRYPT AUDIO" & "PLAY DECRYPTED AUDIO" FOREVER-----*/
     /*-----------------------------------LISTEN TO SERVER----------------------------------*/
     // loop until message received
+    createServer();
+    char result[44100/2];
+    int32_t lrData;
+    getTCPEsp(UART_ID, result, 44100/2);
+    PIO pio = pio0;
+    uint sm;
+    initDac(&pio, &sm);
+    for (size_t i = 0; i < 44100/2; i += 5)
+    {
+        lrData = result[i] << 24 | result[i + 1] << 16 | result[i + 3] << 8 | result[i + 3];
+        printf("%d\n", lrData);
+        sendDac(pio, sm, lrData);
+    }
+
 
     /*-----------------------------------DECRYPT AUDIO------------------------------------*/
     // variables

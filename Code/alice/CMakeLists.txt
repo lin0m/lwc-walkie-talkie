@@ -20,11 +20,17 @@ target_link_libraries(espHelper pico_stdlib)
 target_include_directories(espHelper PUBLIC "../include/espHelper/src")
 add_subdirectory(include tinyJambu)
 target_include_directories(tinyJambu PUBLIC "${CMAKE_CURRENT_LIST_DIR}/include")
+add_subdirectory(../X3DH/rfc6234 sha)
+target_include_directories(sha PUBLIC "${CMAKE_CURRENT_LIST_DIR}../X3DH/rfc6234")
+add_subdirectory(../X3DH/ed25519 ed25519)
+target_include_directories(ed25519 PUBLIC "${CMAKE_CURRENT_LIST_DIR}../X3DH/ed25519/src")
 target_link_libraries(alice pico_stdlib
                     hardware_pio
                     espHelper
                     dac
                     tinyJambu
+                    sha
+                    ed25519
 )
 pico_add_extra_outputs(alice)
 pico_enable_stdio_usb(espHelper 1)

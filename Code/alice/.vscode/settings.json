@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "dac.h": "c",
+        "esphelper.h": "c",
+        "stdlib.h": "c",
+        "dac.pio.h": "c"
+    }
+}
