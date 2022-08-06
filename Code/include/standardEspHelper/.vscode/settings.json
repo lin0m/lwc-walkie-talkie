@@ -2,6 +2,7 @@
     "files.associations": {
         "stdesphelper.h": "c",
         "stdbool.h": "c",
-        "functional": "c"
+        "functional": "c",
+        "stdlib.h": "c"
     }
 }
