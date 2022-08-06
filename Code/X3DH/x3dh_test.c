@@ -1,8 +1,6 @@
 #include<stdio.h>
 #include "ed25519/src/ed25519.h"
-#include<string.h>
-#include<stdlib.h>
-#include "rfc6234/sha.h"
+#include "sha/rfc6234/sha.h"
 
 
 void get_shared_key(unsigned char *dh_final, SHAversion whichSha, const unsigned char *salt, const unsigned char *info,
