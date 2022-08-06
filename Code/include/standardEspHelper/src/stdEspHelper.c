@@ -27,20 +27,27 @@ bool searchStringOnce(const char *key, char *currentString)
  * @return true - an OK was found
  * @return false - either an ERROR was found or nothing was found
  */
-bool ready(char *currentString)
+
+/**
+ * @brief checks for an "OK", "ERROR", or nothing and returns 1, 0, or -1 respectively
+ * 
+ * @param currentString string to search in
+ * @return int - 1, 0, or -1 for "OK", "ERROR", or "OK" respectively
+ */
+int ready(char *currentString)
 {
     const char OK[] = "OK";
     const char ERROR[] = "ERROR";
     if (searchStringOnce(OK, currentString))
     {
-        return true;
+        return 1;
     }
     else if (searchStringOnce(ERROR, currentString))
     {
-        return false;
+        return 0;
     }
     else
     {
-        return false;
+        return -1;
     }
 }
