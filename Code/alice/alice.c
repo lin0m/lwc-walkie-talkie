@@ -210,7 +210,7 @@ void get_dh_output(unsigned char *alice_identity_public_key, unsigned char *bob_
 
     // Concatenating dh outputs
     // Concatenating dh outputs - because strcat, strncat and memcpy doesn't seem to work. 
-    //Additionally, no need to include string.h/stdlib.h atleast for X3DH
+    
     for(int j=0; j<96;j++)
     {
         if(j<32) dh_final[j] = dh1[j]; 
