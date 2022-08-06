@@ -193,25 +193,30 @@ void decrypt(const unsigned char *c, unsigned long long clen, const unsigned cha
     printf("\n");
 }
 
-void get_dh_output(unsigned char *alice_identity_public_key, unsigned char *spk_private_key, unsigned char *id_private_key,
+void get_dh_output(unsigned char *alice_identity_public_key, unsigned char *bob_spk_private_key, unsigned char *bob_id_private_key,
                    unsigned char *alice_ephemeral_public_key, unsigned char *dh_final)
 {
     // DH outputs
     unsigned char dh1[32], dh2[32], dh3[32]; // DH exchanges - no opk so only 3 outputs
 
     // DH1 = DH(IKA, SPKB)
-    ed25519_key_exchange(dh1, alice_identity_public_key, spk_private_key);
+    ed25519_key_exchange(dh1, alice_identity_public_key, bob_spk_private_key);
 
-    // DH2 = DH(EKA, IKB)
-    ed25519_key_exchange(dh2, alice_ephemeral_public_key, id_private_key);
+    //DH2 = DH(EKA, IKB)
+    ed25519_key_exchange(dh2, alice_ephemeral_public_key, bob_id_private_key);
 
-    // DH3 = DH(EKA, SPKB)
-    ed25519_key_exchange(dh3, alice_ephemeral_public_key, spk_private_key);
+    //DH3 = DH(EKA, SPKB)
+    ed25519_key_exchange(dh3, alice_ephemeral_public_key, bob_spk_private_key);
 
     // Concatenating dh outputs
-    strcat(dh_final, dh1);
-    strcat(dh_final, dh2);
-    strcat(dh_final, dh3);
+    // Concatenating dh outputs - because strcat, strncat and memcpy doesn't seem to work. 
+    //Additionally, no need to include string.h/stdlib.h atleast for X3DH
+    for(int j=0; j<96;j++)
+    {
+        if(j<32) dh_final[j] = dh1[j]; 
+        if(j>=32 && j< 64)  dh_final[j] = dh2[j%32]; 
+        if(j>=64)  dh_final[j] = dh3[j%32]; 
+    }
 }
 
 void get_shared_key(unsigned char *dh_final, SHAversion whichSha, const unsigned char *salt, const unsigned char *info,
