@@ -1,4 +1,5 @@
 #include "stdEspHelper.h"
+// TODO: change all int errors to enums to make them clearer
 /**
  * @brief searches a string for substring
  * @note this is created to simplify searching for a substring
@@ -49,5 +50,27 @@ int ready(char *currentString)
     else
     {
         return -1;
+    }
+}
+/**
+ * @brief appends a character to the string after checking for an "OK" or "ERROR"
+ * @note case 0 probably means resend and display a warning/error, case 2 means resize or reset string, case 1 means continue to next command, case -1 should mean do nothing since a character is automatically added
+ * @param currentString string to check
+ * @param capacity capacity of string
+ * @param input a character to append
+ * @return int : 2, -2, 1, 0 for misc error, not found, found, error respectively
+ */
+int appendReady(char* currentString, const size_t capacity, char input) {
+    if (strlen(currentString) >= capacity) {
+        return 2;
+    } else if (ready(currentString) == -1) {
+        strncat(currentString, &input, 1);
+        return -1;
+    } else if (ready(currentString) == 1) {
+        return 1;
+    } else if (ready(currentString) == 0) {
+        return 0;
+    } else {
+        return 2;
     }
 }
