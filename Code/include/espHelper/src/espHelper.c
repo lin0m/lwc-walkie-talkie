@@ -1,4 +1,6 @@
 #include "espHelper.h"
+
+
 /**
  * @brief searches for a string once
  * @note the uart_ID paramter can be replaced with a char if the caller provides the character from uart
@@ -132,4 +134,10 @@ int getTCPEsp(uart_inst_t *uart_ID, char *result, size_t resultCapacity)
         // printf("result: %s", result);
     }
     return atoi(linkID);
+}
+void initEsp() {
+    stdio_init_all();
+    uart_init(UART_ID, BAUD_RATE);
+    gpio_set_function(UART_TX_PIN, GPIO_FUNC_UART);
+    gpio_set_function(UART_RX_PIN, GPIO_FUNC_UART);
 }

@@ -20,6 +20,12 @@
     "gpio.h": "c",
     "esphelper.h": "c",
     "stdlib.h": "c",
-    "uart.h": "c"
+    "uart.h": "c",
+    "crypto_aead.h": "c",
+    "ed25519.h": "c",
+    "mic.pio.h": "c",
+    "pio.h": "c",
+    "sha.h": "c",
+    "mic.h": "c"
   },
 }
