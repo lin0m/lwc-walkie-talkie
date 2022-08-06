@@ -8,7 +8,7 @@
 #include "espHelper.h"
 #include "mic.h"
 #include "../X3DH/ed25519/src/ed25519.h"
-#include "../X3DH/rfc6234/sha.h"
+#include "../X3DH/sha/rfc6234/sha.h"
 
 #define UART_ID uart1
 #define BAUD_RATE 115200

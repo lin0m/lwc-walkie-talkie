@@ -2,7 +2,7 @@
 #include <string.h>
 #include "encrypt.c"
 #include "../X3DH/ed25519/src/ed25519.h"
-#include "../X3DH/rfc6234/sha.h"
+#include "../X3DH/sha/rfc6234/sha.h"
 #include "espHelper.h"
 #include "dac.h"
 

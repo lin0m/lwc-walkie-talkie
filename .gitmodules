@@ -1,0 +1,3 @@
+[submodule "Code/X3DH/sha/rfc6234"]
+	path = Code/X3DH/sha/rfc6234
+	url = https://github.com/massar/rfc6234.git
