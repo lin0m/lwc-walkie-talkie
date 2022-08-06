@@ -31,7 +31,7 @@ bool searchStringOnce(const char *key, char *currentString)
 
 /**
  * @brief checks for an "OK", "ERROR", or nothing and returns 1, 0, or -1 respectively
- * 
+ *
  * @param currentString string to search in
  * @return int - 1, 0, or -1 for "OK", "ERROR", or "OK" respectively
  */
@@ -60,17 +60,61 @@ int ready(char *currentString)
  * @param input a character to append
  * @return int : 2, -2, 1, 0 for misc error, not found, found, error respectively
  */
-int appendReady(char* currentString, const size_t capacity, char input) {
-    if (strlen(currentString) >= capacity) {
-        return 2;
-    } else if (ready(currentString) == -1) {
-        strncat(currentString, &input, 1);
-        return -1;
-    } else if (ready(currentString) == 1) {
-        return 1;
-    } else if (ready(currentString) == 0) {
-        return 0;
-    } else {
+int appendReady(char *currentString, const size_t capacity, char input)
+{
+    if (strlen(currentString) >= capacity)
+    {
         return 2;
     }
+    else if (ready(currentString) == -1)
+    {
+        strncat(currentString, &input, 1);
+        return -1;
+    }
+    else if (ready(currentString) == 1)
+    {
+        return 1;
+    }
+    else if (ready(currentString) == 0)
+    {
+        return 0;
+    }
+    else
+    {
+        return 2;
+    }
+}
+// +IPD,0,5:test
+// TODO: use better function for splitting strings; ideally with a delimeter
+int parseTCP(char *dataIn, char *onlyData)
+{
+    strcpy(onlyData, "");
+    size_t link;
+    char linkInChar[80] = "";
+    char amountInChar[80] = "";
+    char *walker = dataIn;
+    // up to +IPD
+    while (*walker != ',')
+    {
+        walker++;
+    }
+    walker++;
+    // getting link_ID
+    while (*walker != ',')
+    {
+        strncat(linkInChar, walker, 1);
+        walker++;
+    }
+    walker++;
+    link = atoi(linkInChar);
+    // getting amount of bytes sent
+    while (*walker != ':')
+    {
+        strncat(amountInChar, walker, 1);
+        walker++;
+    }
+    // the rest of the string should be data
+    // ensure that onlyData is large enough somehow
+    strcat(onlyData, walker);
+    return link;
 }
