@@ -2,4 +2,5 @@
 #include "stdlib.h"
 #include "string.h"
 #include "stdbool.h"
-bool searchStringOnce(char *key, char *currentString);
+bool searchStringOnce(const char *key, char *currentString);
+bool ready(char* currentString);
