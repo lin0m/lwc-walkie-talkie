@@ -112,16 +112,21 @@ int main(void)
     const size_t SAMPLE_FREQUENCY = 44100;
     const size_t BYTES_PER_SAMPLE = 4;
     const size_t SIZE_OF_RETURN = 2;
-    const size_t HALF_SECOND_BUFFER = ((SAMPLE_FREQUENCY * BYTES_PER_SAMPLE) / 2);
-    printf("initializing esp\n");
+    const size_t BITS_IN_BYTE = 8;
+    // const size_t BUFFER_SIZE = ((SAMPLE_FREQUENCY * BYTES_PER_SAMPLE) / 2);
+    // below stores 8, 32-bit values
+    const size_t BUFFER_SIZE = ((BYTES_PER_SAMPLE) * 8);
+    const size_t SAMPLE_ARR_SIZE = BUFFER_SIZE + SIZE_OF_RETURN;
+    // there are 8 samples, each 4 bytes and each char is a byte, so there should be (8 * 4) / (1char/1byte) chars
     for (size_t i = 0; i < 10; i++)
     {
         printf("%d\n", i);
         sleep_ms(1000);
     }
+    printf("initializing esp\n");
     
     // createClient();
-    char sampleArr[(HALF_SECOND_BUFFER) + SIZE_OF_RETURN];
+    char sampleArr[SAMPLE_ARR_SIZE];
     PIO pio;
     uint sm;
     initMic(&pio, &sm);
@@ -130,24 +135,41 @@ int main(void)
     while (true)
     {
         current = get_absolute_time();
-        for (uint64_t i = 0; i < (SAMPLE_FREQUENCY) / (size_t)2; i += 4)
+        // fill in 32 bits at a time; 4 chars at once
+        for (uint64_t i = 0; i < BUFFER_SIZE; i += 4)
         {
             sample = getSingleSampleBlocking(pio, sm);
-            sampleArr[i] = (0xFF000000 & sample) >> 24;
-            sampleArr[i + 1] = (0x00FF0000 & sample) >> 16;
-            sampleArr[i + 2] = (0x0000FF00 & sample) >> 8;
-            sampleArr[i + 3] = (0x000000FF & sample);
+            sampleArr[i] = (sample >> 24) & 0x000000FF;
+            sampleArr[i + 1] = (sample >> 16) & 0x000000FF;
+            sampleArr[i + 2] = (sample >> 8) & 0x000000FF;
+            sampleArr[i + 3] = (sample) & 0x000000FF;
             printf("i is: %llu\n", i);
             if (!printTimer(&current, 1000*10)) {
-                printf("sample is: %X\n", sample);
+                // printf("sampleArr is: ");
+                // for (size_t j = 0; j < 4; j++)
+                // {
+                //     printf("%02X", sampleArr[i + j]);
+                // }
+                // printf("\n");
                 current = get_absolute_time();
             }
         }
         char cipCommand[80];
         // send half a second buffer for now; later change it to fit in tinyJambu
-        // sendCip(HALF_SECOND_BUFFER, cipCommand);
+        sendCip(BUFFER_SIZE, cipCommand);
         // uart_puts(UART_ID, cipCommand);
+        printf(cipCommand);
         // data goes here:
+        strcat(sampleArr, "\r\n");
+        printf("stuff sent is: ");
+        // read a char at a time
+        for (uint64_t i = 0; i < BUFFER_SIZE; i++)
+        {
+            // printf("i is: %llu|", i);
+            printf("char is: %02X", sampleArr[i]);
+        }
+        printf("\n");
+        
         // uart_puts(UART_ID, strcat(sampleArr, "\r\n"));
     }
 

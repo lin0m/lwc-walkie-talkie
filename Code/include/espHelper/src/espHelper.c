@@ -148,10 +148,11 @@ void initEsp() {
  * @param numberOfBytes 
  * @param CIP_Command 
  */
-void sendCip(const size_t numberOfBytes, char* command) {
+void sendCip(const uint64_t numberOfBytes, char* command) {
     strcpy(command, "AT+CIPSEND=");
     char charBytesToSend[80];
     sprintf(charBytesToSend, "%llu", numberOfBytes);
+    // printf("bytes being sent is: %s\n", charBytesToSend);
     strcat(command, charBytesToSend);
     strcat(command, "\r\n");
 }
