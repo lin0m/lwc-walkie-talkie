@@ -141,3 +141,17 @@ void initEsp() {
     gpio_set_function(UART_TX_PIN, GPIO_FUNC_UART);
     gpio_set_function(UART_RX_PIN, GPIO_FUNC_UART);
 }
+/**
+ * @brief constructs the cip command based on the number of bytes to send
+ * 
+ * @param data 
+ * @param numberOfBytes 
+ * @param CIP_Command 
+ */
+void sendCip(const size_t numberOfBytes, char* command) {
+    strcpy(command, "AT+CIPSEND=");
+    char charBytesToSend[80];
+    sprintf(charBytesToSend, "%llu", numberOfBytes);
+    strcat(command, charBytesToSend);
+    strcat(command, "\r\n");
+}

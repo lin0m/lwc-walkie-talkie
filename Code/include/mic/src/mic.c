@@ -14,3 +14,14 @@ int32_t getSingleSampleBlocking(PIO pio, uint sm) {
     int32_t lrData = lrDataFull & 0xFFFF0000;
     return lrData;
 }
+bool printTimer(absolute_time_t *current, int64_t waitTime_us)
+{
+    if (absolute_time_diff_us(*current, get_absolute_time()) > waitTime_us)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}

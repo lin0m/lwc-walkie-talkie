@@ -13,3 +13,4 @@ int getTCPEsp(uart_inst_t* uart_ID, char* result, size_t resultCapacity);
 bool searchUARTOnce(char* key, char* currentString, size_t length, uart_inst_t* uart_ID);
 bool searchStringOnce(char* key, char* currentString);
 void initEsp();
+void sendCip(const size_t numberOfBytes, char* CIP_Command);

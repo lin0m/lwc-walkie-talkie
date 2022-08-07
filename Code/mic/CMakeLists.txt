@@ -40,3 +40,7 @@ pico_generate_pio_header(micTest ${CMAKE_CURRENT_LIST_DIR}/mic.pio)
 pico_generate_pio_header(micTest ${CMAKE_CURRENT_LIST_DIR}/dac.pio)
 target_sources(micTest PRIVATE micTest.c)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+add_subdirectory(../include/mic mic)
+target_include_directories(mic PUBLIC "../include/mic/src")
+target_link_libraries(micTest mic)

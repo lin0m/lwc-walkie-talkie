@@ -1,14 +1,13 @@
 #include <stdio.h>
 #include <string.h>
-#ifdef USE_PICO
 #include "pico/stdlib.h"
 #include "hardware/pio.h"
-#endif
 #include "crypto_aead.h"
 #include "espHelper.h"
 #include "mic.h"
 #include "../X3DH/ed25519/src/ed25519.h"
 #include "../X3DH/sha/rfc6234/sha.h"
+
 
 #define UART_ID uart1
 #define BAUD_RATE 115200
@@ -56,6 +55,7 @@ void get_shared_key(unsigned char *dh_final, SHAversion whichSha, const unsigned
                     unsigned char *output_key, int okm_len);
 int main(void)
 {
+    stdio_init_all();
     /*-------------------------------DEFINING VARIABLES FOR X3DH--------------------------*/
     unsigned char bob_id_public_key[32];  // bob's identity key
     unsigned char bob_spk_public_key[32]; // bob's signed prekey
@@ -75,22 +75,16 @@ int main(void)
     ed25519_create_seed(seed);
     ed25519_create_keypair(id_public_key, id_private_key, seed);
 
-/*----------------------------------CONNECT TO SERVER----------------------------------*/
-// stdio_init_all();
-#ifdef USE_PICO
-#endif
-
-#ifdef USE_PICO
-#endif
+    /*----------------------------------CONNECT TO SERVER----------------------------------*/
     /*----------------------------------LISTEN TO SERVER----------------------------------*/
     // loop until message received
-    while (FetchPreKeyBundle(bob_id_public_key, bob_spk_public_key, bob_spk_signature, 2) == 1)
-    {
-        /**
-         * Waiting for server to send prekey bundle
-         */
-        continue;
-    }
+    // while (FetchPreKeyBundle(bob_id_public_key, bob_spk_public_key, bob_spk_signature, 2) == 1)
+    // {
+    //     /**
+    //      * Waiting for server to send prekey bundle
+    //      */
+    //     continue;
+    // }
 
     /*------------------------------------FINISH X3DH-------------------------------------*/
     if (ed25519_verify(bob_spk_signature, bob_id_public_key))
@@ -115,41 +109,46 @@ int main(void)
     /*---------------LOOP "ENCRYPT AUDIO" & "SEND ENCRYPTED AUDIO" FOREVER----------------*/
     /*-----------------------------------ENCRYPT AUDIO------------------------------------*/
     // variables
-    char currentString[44100 / 2];
-    PIO pio = pio0;
+    const size_t SAMPLE_FREQUENCY = 44100;
+    const size_t BYTES_PER_SAMPLE = 4;
+    const size_t SIZE_OF_RETURN = 2;
+    const size_t HALF_SECOND_BUFFER = ((SAMPLE_FREQUENCY * BYTES_PER_SAMPLE) / 2);
+    printf("initializing esp\n");
+    for (size_t i = 0; i < 10; i++)
+    {
+        printf("%d\n", i);
+        sleep_ms(1000);
+    }
+    
+    // createClient();
+    char sampleArr[(HALF_SECOND_BUFFER) + SIZE_OF_RETURN];
+    PIO pio;
     uint sm;
     initMic(&pio, &sm);
     int32_t sample;
+    absolute_time_t current = get_absolute_time();
     while (true)
     {
-
-        for (size_t i = 0; i < (44100 - 4) / 2; i += 5)
+        current = get_absolute_time();
+        for (uint64_t i = 0; i < (SAMPLE_FREQUENCY) / (size_t)2; i += 4)
         {
-
             sample = getSingleSampleBlocking(pio, sm);
-            currentString[i] = 0xFF000000 & sample;
-            currentString[i + 1] = 0x00FF0000 & sample;
-            currentString[i + 2] = 0x0000FF00 & sample;
-            currentString[i + 3] = 0x000000FF & sample;
-            printf("sample is: %X", sample);
+            sampleArr[i] = (0xFF000000 & sample) >> 24;
+            sampleArr[i + 1] = (0x00FF0000 & sample) >> 16;
+            sampleArr[i + 2] = (0x0000FF00 & sample) >> 8;
+            sampleArr[i + 3] = (0x000000FF & sample);
+            printf("i is: %llu\n", i);
+            if (!printTimer(&current, 1000*10)) {
+                printf("sample is: %X\n", sample);
+                current = get_absolute_time();
+            }
         }
-        char atSend[80] = "AT+CIPSEND=";
+        char cipCommand[80];
         // send half a second buffer for now; later change it to fit in tinyJambu
-        size_t amount = 44100 / 2;
-        char amountChar[80];
-        sprintf(amountChar, "%llu", amount);
-        strcat(atSend, amountChar);
-        strcat(atSend, "\r\n");
-        uart_puts(UART_ID, atSend);
-        while (!waitUntilReady(currentString, 256, UART_ID))
-        {
-            uart_puts(UART_ID, atSend);
-            printf(currentString);
-        }
-
+        // sendCip(HALF_SECOND_BUFFER, cipCommand);
+        // uart_puts(UART_ID, cipCommand);
         // data goes here:
-
-        uart_puts(UART_ID, strcat(currentString, "\r\n"));
+        // uart_puts(UART_ID, strcat(sampleArr, "\r\n"));
     }
 
     const unsigned char m[] = {0x00};                                                                                           // plaintext
@@ -188,19 +187,21 @@ void get_dh_output(unsigned char *bob_id_public_key, unsigned char *alice_epheme
 
     ed25519_key_exchange(dh1, bob_spk_public_key, alice_id_private_key);
 
-    //DH2 = DH(EKA, IKB) 
+    // DH2 = DH(EKA, IKB)
     ed25519_key_exchange(dh2, bob_id_public_key, alice_ephemeral_private_key);
 
-    //DH3 = DH(EKA, SPKB)
+    // DH3 = DH(EKA, SPKB)
     ed25519_key_exchange(dh3, bob_spk_public_key, alice_ephemeral_private_key);
 
-
-    // Concatenating dh outputs - because strcat, strncat and memcpy doesn't seem to work. 
-    for(int j=0; j<96;j++)
+    // Concatenating dh outputs - because strcat, strncat and memcpy doesn't seem to work.
+    for (int j = 0; j < 96; j++)
     {
-        if(j<32) dh_final[j] = dh1[j]; 
-        if(j>=32 && j< 64)  dh_final[j] = dh2[j%32]; 
-        if(j>=64)  dh_final[j] = dh3[j%32]; 
+        if (j < 32)
+            dh_final[j] = dh1[j];
+        if (j >= 32 && j < 64)
+            dh_final[j] = dh2[j % 32];
+        if (j >= 64)
+            dh_final[j] = dh3[j % 32];
     }
 }
 
