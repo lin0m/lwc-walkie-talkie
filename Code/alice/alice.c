@@ -2,7 +2,7 @@
 #include <string.h>
 #include "encrypt.c"
 #include "../X3DH/ed25519/src/ed25519.h"
-#include "../X3DH/sha/rfc6234/sha.h"
+#include "../X3DH/rfc6234/sha.h"
 #include "espHelper.h"
 #include "dac.h"
 
@@ -16,7 +16,6 @@
  * 5. Play the audio
  */
 void decrypt(const unsigned char *c, unsigned long long clen, const unsigned char *k);
-void ConnectToServer(){};
 void SendtoServer(const unsigned char *id_public_key, unsigned char *spk_public_key, const unsigned char *spk_signature, int message_type){};
 int ReceiveFromAlice(unsigned char *alice_identity_public_key, unsigned char *alice_ephemeral_public_key, unsigned char *initial_ciphertext, int message_type){};
 void get_dh_output(unsigned char *alice_identity_public_key, unsigned char *spk_private_key, unsigned char *id_private_key,
@@ -112,34 +111,34 @@ int main(void)
     /*----------------------------------CONNECT TO SERVER AND SEND PREKEY BUNDLE----------------------------------*/
 
     // CONNECTING TO SERVER
-    ConnectToServer();
+    // createServer();
 
-    // Generating long-term Identity Key pair for Bob
-    ed25519_create_seed(seed);                                   // create random seed
-    ed25519_create_keypair(id_public_key, id_private_key, seed); // create keypair out of seed
+    // // Generating long-term Identity Key pair for Bob
+    // ed25519_create_seed(seed);                                   // create random seed
+    // ed25519_create_keypair(id_public_key, id_private_key, seed); // create keypair out of seed
 
-    // Generate SignedPreKey Pair for bob
-    ed25519_create_seed(seed);                                     // create random seed
-    ed25519_create_keypair(spk_public_key, spk_private_key, seed); // create keypair out of seed
+    // // Generate SignedPreKey Pair for bob
+    // ed25519_create_seed(seed);                                     // create random seed
+    // ed25519_create_keypair(spk_public_key, spk_private_key, seed); // create keypair out of seed
 
-    ed25519_sign(spk_signature, id_public_key, id_private_key);
+    // ed25519_sign(spk_signature, id_public_key, id_private_key);
 
-    // Send keys to server - with my message type to indicate to the server that this is the prekey bundle
-    SendtoServer(id_public_key, spk_public_key, spk_signature, 1);
+    // // Send keys to server - with my message type to indicate to the server that this is the prekey bundle
+    // SendtoServer(id_public_key, spk_public_key, spk_signature, 1);
 
-    /*-------------------------------------START X3DH--------------------------------------*/
-    // loop until message received
+    // /*-------------------------------------START X3DH--------------------------------------*/
+    // // loop until message received
 
-    while (ReceiveFromAlice(alice_identity_public_key, alice_ephemeral_public_key, ciphertext, 3) == 1)
-    {
-        /**
-         * Waiting for server to send response of the encrypted audio
-         */
-        continue;
-    }
+    // while (ReceiveFromAlice(alice_identity_public_key, alice_ephemeral_public_key, ciphertext, 3) == 1)
+    // {
+    //     /**
+    //      * Waiting for server to send response of the encrypted audio
+    //      */
+    //     continue;
+    // }
 
-    get_dh_output(alice_identity_public_key, spk_private_key, id_private_key, alice_ephemeral_public_key, dh_final);
-    get_shared_key(dh_final, SHA512, NULL, NULL, hex_hkdf_output, 128);
+    // get_dh_output(alice_identity_public_key, spk_private_key, id_private_key, alice_ephemeral_public_key, dh_final);
+    // get_shared_key(dh_final, SHA512, NULL, NULL, hex_hkdf_output, 128);
 
     /*------LOOP "LISTEN TO SERVER" &"DECRYPT AUDIO" & "PLAY DECRYPTED AUDIO" FOREVER-----*/
     /*-----------------------------------LISTEN TO SERVER----------------------------------*/
@@ -193,30 +192,25 @@ void decrypt(const unsigned char *c, unsigned long long clen, const unsigned cha
     printf("\n");
 }
 
-void get_dh_output(unsigned char *alice_identity_public_key, unsigned char *bob_spk_private_key, unsigned char *bob_id_private_key,
+void get_dh_output(unsigned char *alice_identity_public_key, unsigned char *spk_private_key, unsigned char *id_private_key,
                    unsigned char *alice_ephemeral_public_key, unsigned char *dh_final)
 {
     // DH outputs
     unsigned char dh1[32], dh2[32], dh3[32]; // DH exchanges - no opk so only 3 outputs
 
     // DH1 = DH(IKA, SPKB)
-    ed25519_key_exchange(dh1, alice_identity_public_key, bob_spk_private_key);
+    ed25519_key_exchange(dh1, alice_identity_public_key, spk_private_key);
 
-    //DH2 = DH(EKA, IKB)
-    ed25519_key_exchange(dh2, alice_ephemeral_public_key, bob_id_private_key);
+    // DH2 = DH(EKA, IKB)
+    ed25519_key_exchange(dh2, alice_ephemeral_public_key, id_private_key);
 
-    //DH3 = DH(EKA, SPKB)
-    ed25519_key_exchange(dh3, alice_ephemeral_public_key, bob_spk_private_key);
+    // DH3 = DH(EKA, SPKB)
+    ed25519_key_exchange(dh3, alice_ephemeral_public_key, spk_private_key);
 
     // Concatenating dh outputs
-    // Concatenating dh outputs - because strcat, strncat and memcpy doesn't seem to work. 
-    
-    for(int j=0; j<96;j++)
-    {
-        if(j<32) dh_final[j] = dh1[j]; 
-        if(j>=32 && j< 64)  dh_final[j] = dh2[j%32]; 
-        if(j>=64)  dh_final[j] = dh3[j%32]; 
-    }
+    strcat(dh_final, dh1);
+    strcat(dh_final, dh2);
+    strcat(dh_final, dh3);
 }
 
 void get_shared_key(unsigned char *dh_final, SHAversion whichSha, const unsigned char *salt, const unsigned char *info,
