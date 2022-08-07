@@ -112,10 +112,9 @@ int main(void)
     const size_t SAMPLE_FREQUENCY = 44100;
     const size_t BYTES_PER_SAMPLE = 4;
     const size_t SIZE_OF_RETURN = 2;
-    const size_t BITS_IN_BYTE = 8;
-    // const size_t BUFFER_SIZE = ((SAMPLE_FREQUENCY * BYTES_PER_SAMPLE) / 2);
+    const size_t BUFFER_SIZE = ((SAMPLE_FREQUENCY * BYTES_PER_SAMPLE) / 2);
     // below stores 8, 32-bit values
-    const size_t BUFFER_SIZE = ((BYTES_PER_SAMPLE) * 8);
+    // const size_t BUFFER_SIZE = ((BYTES_PER_SAMPLE) * 8);
     const size_t SAMPLE_ARR_SIZE = BUFFER_SIZE + SIZE_OF_RETURN;
     // there are 8 samples, each 4 bytes and each char is a byte, so there should be (8 * 4) / (1char/1byte) chars
     for (size_t i = 0; i < 10; i++)
@@ -125,7 +124,7 @@ int main(void)
     }
     printf("initializing esp\n");
     
-    // createClient();
+    createClient();
     char sampleArr[SAMPLE_ARR_SIZE];
     PIO pio;
     uint sm;
@@ -157,9 +156,8 @@ int main(void)
         char cipCommand[80];
         // send half a second buffer for now; later change it to fit in tinyJambu
         sendCip(BUFFER_SIZE, cipCommand);
-        // uart_puts(UART_ID, cipCommand);
+        uart_puts(UART_ID, cipCommand);
         printf("Command is: %s", cipCommand);
-        // data goes here:
         strcat(sampleArr, "\r\n");
         printf("stuff sent is: ");
         // read a char at a time
@@ -169,8 +167,9 @@ int main(void)
             printf("%02X|", sampleArr[i]);
         }
         printf("\n");
-        
-        // uart_puts(UART_ID, strcat(sampleArr, "\r\n"));
+        // data goes here:
+        // TODO: The code below won't work correctly; sampleArr is not a C string since it doesn't have a null character at the end
+        uart_puts(UART_ID, sampleArr);
     }
 
     const unsigned char m[] = {0x00};                                                                                           // plaintext
