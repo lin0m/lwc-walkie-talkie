@@ -143,7 +143,7 @@ int main(void)
             sampleArr[i + 1] = (sample >> 16) & 0x000000FF;
             sampleArr[i + 2] = (sample >> 8) & 0x000000FF;
             sampleArr[i + 3] = (sample) & 0x000000FF;
-            printf("i is: %llu\n", i);
+            // printf("i is: %llu\n", i);
             if (!printTimer(&current, 1000*10)) {
                 // printf("sampleArr is: ");
                 // for (size_t j = 0; j < 4; j++)
@@ -158,7 +158,7 @@ int main(void)
         // send half a second buffer for now; later change it to fit in tinyJambu
         sendCip(BUFFER_SIZE, cipCommand);
         // uart_puts(UART_ID, cipCommand);
-        printf(cipCommand);
+        printf("Command is: %s", cipCommand);
         // data goes here:
         strcat(sampleArr, "\r\n");
         printf("stuff sent is: ");
@@ -166,7 +166,7 @@ int main(void)
         for (uint64_t i = 0; i < BUFFER_SIZE; i++)
         {
             // printf("i is: %llu|", i);
-            printf("char is: %02X", sampleArr[i]);
+            printf("%02X|", sampleArr[i]);
         }
         printf("\n");
         
