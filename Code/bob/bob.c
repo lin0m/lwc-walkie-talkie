@@ -164,7 +164,7 @@ int main(void)
         strcat(sampleArr, "\r\n\0");
         printf("stuff sent is: ");
         // read a char at a time
-        for (uint64_t i = 0; i < BUFFER_SIZE; i++)
+        for (uint64_t i = 0; i < SAMPLE_ARR_SIZE; i++)
         {
             // printf("i is: %llu|", i);
             printf("%02X|", sampleArr[i]);
