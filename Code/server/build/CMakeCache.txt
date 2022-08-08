@@ -293,6 +293,15 @@ PICO_STDIO_UART:BOOL=ON
 PICO_STDIO_USB:BOOL=OFF
 
 //Value Computed by CMake
+espHelper_BINARY_DIR:STATIC=/Users/lino/Research/lightweight-cryptography/Code/server/build/espHelper
+
+//Value Computed by CMake
+espHelper_IS_TOP_LEVEL:STATIC=OFF
+
+//Value Computed by CMake
+espHelper_SOURCE_DIR:STATIC=/Users/lino/Research/lightweight-cryptography/Code/include/espHelper/src
+
+//Value Computed by CMake
 pico_sdk_BINARY_DIR:STATIC=/Users/lino/Research/lightweight-cryptography/Code/server/build/pico-sdk
 
 //Value Computed by CMake
@@ -432,7 +441,7 @@ CMAKE_MODULE_LINKER_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_NM
 CMAKE_NM-ADVANCED:INTERNAL=1
 //number of local generators
-CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=71
+CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=73
 //ADVANCED property for variable: CMAKE_OBJCOPY
 CMAKE_OBJCOPY-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_OBJDUMP
@@ -486,7 +495,7 @@ PICO_BOOT_STAGE2_DIR:INTERNAL=/Users/lino/Research/pico-sdk/src/rp2_common/boot_
 PICO_CMAKE_PRELOAD_PLATFORM_DIR:INTERNAL=/Users/lino/Research/pico-sdk/cmake/preload/platforms
 PICO_CMAKE_PRELOAD_PLATFORM_FILE:INTERNAL=/Users/lino/Research/pico-sdk/cmake/preload/platforms/rp2040.cmake
 PICO_COMPILER_ASM:INTERNAL=/usr/local/bin/arm-none-eabi-gcc
-PICO_DOXYGEN_EXCLUDE_PATHS:INTERNAL= /Users/lino/Research/pico-sdk/src/rp2_common/cmsis /Users/lino/Research/pico-sdk/src/rp2040/hardware_regs /Users/lino/Research/pico-sdk/src/rp2_common/cmsis /Users/lino/Research/pico-sdk/src/rp2040/hardware_regs /Users/lino/Research/pico-sdk/src/rp2_common/cmsis /Users/lino/Research/pico-sdk/src/rp2040/hardware_regs
+PICO_DOXYGEN_EXCLUDE_PATHS:INTERNAL= /Users/lino/Research/pico-sdk/src/rp2_common/cmsis /Users/lino/Research/pico-sdk/src/rp2040/hardware_regs /Users/lino/Research/pico-sdk/src/rp2_common/cmsis /Users/lino/Research/pico-sdk/src/rp2040/hardware_regs /Users/lino/Research/pico-sdk/src/rp2_common/cmsis /Users/lino/Research/pico-sdk/src/rp2040/hardware_regs /Users/lino/Research/pico-sdk/src/rp2_common/cmsis /Users/lino/Research/pico-sdk/src/rp2040/hardware_regs
 PICO_DOXYGEN_PATHS:INTERNAL= /Users/lino/Research/pico-sdk/src/common /Users/lino/Research/pico-sdk/src/rp2_common /Users/lino/Research/pico-sdk/src/rp2040
 PICO_NO_HARDWARE:INTERNAL=0
 PICO_ON_DEVICE:INTERNAL=1

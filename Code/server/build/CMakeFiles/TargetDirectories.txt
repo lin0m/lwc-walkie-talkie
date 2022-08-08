@@ -145,3 +145,8 @@
 /Users/lino/Research/lightweight-cryptography/Code/server/build/pico-sdk/src/rp2040/hardware_structs/CMakeFiles/rebuild_cache.dir
 /Users/lino/Research/lightweight-cryptography/Code/server/build/pico-sdk/docs/CMakeFiles/edit_cache.dir
 /Users/lino/Research/lightweight-cryptography/Code/server/build/pico-sdk/docs/CMakeFiles/rebuild_cache.dir
+/Users/lino/Research/lightweight-cryptography/Code/server/build/espHelper/CMakeFiles/espHelper.dir
+/Users/lino/Research/lightweight-cryptography/Code/server/build/espHelper/CMakeFiles/edit_cache.dir
+/Users/lino/Research/lightweight-cryptography/Code/server/build/espHelper/CMakeFiles/rebuild_cache.dir
+/Users/lino/Research/lightweight-cryptography/Code/server/build/espHelper/pico-sdk/CMakeFiles/edit_cache.dir
+/Users/lino/Research/lightweight-cryptography/Code/server/build/espHelper/pico-sdk/CMakeFiles/rebuild_cache.dir

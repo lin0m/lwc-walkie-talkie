@@ -8,7 +8,8 @@
 					"build" : ".",
 					"childIndexes" : 
 					[
-						1
+						1,
+						71
 					],
 					"jsonFile" : "directory-.-Debug-f5ebdc15457944623624.json",
 					"minimumCMakeVersion" : 
@@ -20,7 +21,7 @@
 					"targetIndexes" : 
 					[
 						0,
-						4
+						5
 					]
 				},
 				{
@@ -885,6 +886,36 @@
 					"parentIndex" : 1,
 					"projectIndex" : 1,
 					"source" : "/Users/lino/Research/pico-sdk/docs"
+				},
+				{
+					"build" : "espHelper",
+					"childIndexes" : 
+					[
+						72
+					],
+					"jsonFile" : "directory-espHelper-Debug-b7fa5bcb0e12b7aaafe9.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 2,
+					"source" : "/Users/lino/Research/lightweight-cryptography/Code/include/espHelper/src",
+					"targetIndexes" : 
+					[
+						4
+					]
+				},
+				{
+					"build" : "espHelper/pico-sdk",
+					"jsonFile" : "directory-espHelper.pico-sdk-Debug-da9efec1eca9dfb8d626.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 71,
+					"projectIndex" : 2,
+					"source" : "/Users/lino/Research/pico-sdk"
 				}
 			],
 			"name" : "Debug",
@@ -893,7 +924,8 @@
 				{
 					"childIndexes" : 
 					[
-						1
+						1,
+						2
 					],
 					"directoryIndexes" : 
 					[
@@ -903,7 +935,7 @@
 					"targetIndexes" : 
 					[
 						0,
-						4
+						5
 					]
 				},
 				{
@@ -988,6 +1020,19 @@
 						2,
 						3
 					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						71,
+						72
+					],
+					"name" : "espHelper",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						4
+					]
 				}
 			],
 			"targets" : 
@@ -1021,9 +1066,16 @@
 					"projectIndex" : 1
 				},
 				{
+					"directoryIndex" : 71,
+					"id" : "espHelper::@e4624d48853f4d1a3553",
+					"jsonFile" : "target-espHelper-Debug-30fe092c29a3b4fb27c0.json",
+					"name" : "espHelper",
+					"projectIndex" : 2
+				},
+				{
 					"directoryIndex" : 0,
 					"id" : "server::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-server-Debug-283e143f596991a45fdc.json",
+					"jsonFile" : "target-server-Debug-7ac34a157c597077c65b.json",
 					"name" : "server",
 					"projectIndex" : 0
 				}

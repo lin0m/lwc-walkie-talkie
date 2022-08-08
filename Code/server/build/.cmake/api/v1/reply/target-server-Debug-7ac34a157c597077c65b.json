@@ -48,19 +48,25 @@
 				"parent" : 0
 			},
 			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 36,
+				"parent" : 0
+			},
+			{
 				"file" : 1
 			},
 			{
 				"command" : 2,
 				"file" : 1,
 				"line" : 100,
-				"parent" : 3
+				"parent" : 4
 			},
 			{
 				"command" : 1,
 				"file" : 1,
 				"line" : 76,
-				"parent" : 4
+				"parent" : 5
 			},
 			{
 				"command" : 6,
@@ -72,29 +78,29 @@
 				"command" : 5,
 				"file" : 4,
 				"line" : 45,
-				"parent" : 6
+				"parent" : 7
 			},
 			{
 				"command" : 4,
 				"file" : 3,
 				"line" : 49,
-				"parent" : 7
+				"parent" : 8
 			},
 			{
 				"file" : 2,
-				"parent" : 8
+				"parent" : 9
 			},
 			{
 				"command" : 3,
 				"file" : 2,
 				"line" : 41,
-				"parent" : 9
+				"parent" : 10
 			},
 			{
 				"command" : 3,
 				"file" : 1,
 				"line" : 74,
-				"parent" : 4
+				"parent" : 5
 			},
 			{
 				"command" : 8,
@@ -106,7 +112,7 @@
 				"command" : 7,
 				"file" : 5,
 				"line" : 15,
-				"parent" : 12
+				"parent" : 13
 			},
 			{
 				"command" : 9,
@@ -118,13 +124,13 @@
 				"command" : 7,
 				"file" : 5,
 				"line" : 33,
-				"parent" : 14
+				"parent" : 15
 			},
 			{
 				"command" : 7,
 				"file" : 4,
 				"line" : 28,
-				"parent" : 6
+				"parent" : 7
 			}
 		]
 	},
@@ -315,15 +321,15 @@
 					"define" : "PICO_ON_DEVICE=1"
 				},
 				{
-					"backtrace" : 13,
+					"backtrace" : 14,
 					"define" : "PICO_PROGRAM_NAME=\"server\""
 				},
 				{
-					"backtrace" : 15,
+					"backtrace" : 16,
 					"define" : "PICO_PROGRAM_VERSION_STRING=\"0.1\""
 				},
 				{
-					"backtrace" : 16,
+					"backtrace" : 17,
 					"define" : "PICO_TARGET_NAME=\"server\""
 				},
 				{
@@ -508,6 +514,10 @@
 				{
 					"backtrace" : 2,
 					"path" : "/Users/lino/Research/pico-sdk/src/common/pico_usb_reset_interface/include"
+				},
+				{
+					"backtrace" : 3,
+					"path" : "/Users/lino/Research/lightweight-cryptography/Code/server/../include/espHelper/src"
 				}
 			],
 			"language" : "C",
@@ -762,15 +772,15 @@
 					"define" : "PICO_ON_DEVICE=1"
 				},
 				{
-					"backtrace" : 13,
+					"backtrace" : 14,
 					"define" : "PICO_PROGRAM_NAME=\"server\""
 				},
 				{
-					"backtrace" : 15,
+					"backtrace" : 16,
 					"define" : "PICO_PROGRAM_VERSION_STRING=\"0.1\""
 				},
 				{
-					"backtrace" : 16,
+					"backtrace" : 17,
 					"define" : "PICO_TARGET_NAME=\"server\""
 				},
 				{
@@ -955,6 +965,10 @@
 				{
 					"backtrace" : 2,
 					"path" : "/Users/lino/Research/pico-sdk/src/common/pico_usb_reset_interface/include"
+				},
+				{
+					"backtrace" : 3,
+					"path" : "/Users/lino/Research/lightweight-cryptography/Code/server/../include/espHelper/src"
 				}
 			],
 			"language" : "ASM",
@@ -1174,15 +1188,15 @@
 					"define" : "PICO_ON_DEVICE=1"
 				},
 				{
-					"backtrace" : 13,
+					"backtrace" : 14,
 					"define" : "PICO_PROGRAM_NAME=\"server\""
 				},
 				{
-					"backtrace" : 15,
+					"backtrace" : 16,
 					"define" : "PICO_PROGRAM_VERSION_STRING=\"0.1\""
 				},
 				{
-					"backtrace" : 16,
+					"backtrace" : 17,
 					"define" : "PICO_TARGET_NAME=\"server\""
 				},
 				{
@@ -1367,6 +1381,10 @@
 				{
 					"backtrace" : 2,
 					"path" : "/Users/lino/Research/pico-sdk/src/common/pico_usb_reset_interface/include"
+				},
+				{
+					"backtrace" : 3,
+					"path" : "/Users/lino/Research/lightweight-cryptography/Code/server/../include/espHelper/src"
 				}
 			],
 			"language" : "CXX",
@@ -1387,12 +1405,16 @@
 	"dependencies" : 
 	[
 		{
-			"backtrace" : 10,
+			"backtrace" : 11,
 			"id" : "ELF2UF2Build::@6890427a1f51a3e7e1df"
 		},
 		{
-			"backtrace" : 11,
+			"backtrace" : 12,
 			"id" : "bs2_default_padded_checksummed_asm::@bc554eaed616d198a22d"
+		},
+		{
+			"backtrace" : 3,
+			"id" : "espHelper::@e4624d48853f4d1a3553"
 		}
 	],
 	"id" : "server::@6890427a1f51a3e7e1df",
@@ -2219,7 +2241,12 @@
 				"role" : "flags"
 			},
 			{
-				"backtrace" : 5,
+				"backtrace" : 3,
+				"fragment" : "espHelper/libespHelper.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 6,
 				"fragment" : "pico-sdk/src/rp2_common/boot_stage2/bs2_default_padded_checksummed.S",
 				"role" : "libraries"
 			}

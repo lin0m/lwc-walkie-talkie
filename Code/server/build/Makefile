@@ -181,6 +181,19 @@ bs2_default_padded_checksummed_asm/fast:
 	$(MAKE) $(MAKESILENT) -f pico-sdk/src/rp2_common/boot_stage2/CMakeFiles/bs2_default_padded_checksummed_asm.dir/build.make pico-sdk/src/rp2_common/boot_stage2/CMakeFiles/bs2_default_padded_checksummed_asm.dir/build
 .PHONY : bs2_default_padded_checksummed_asm/fast
 
+#=============================================================================
+# Target rules for targets named espHelper
+
+# Build rule for target.
+espHelper: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 espHelper
+.PHONY : espHelper
+
+# fast build rule for target.
+espHelper/fast:
+	$(MAKE) $(MAKESILENT) -f espHelper/CMakeFiles/espHelper.dir/build.make espHelper/CMakeFiles/espHelper.dir/build
+.PHONY : espHelper/fast
+
 Users/lino/Research/pico-sdk/lib/tinyusb/src/class/audio/audio_device.obj: Users/lino/Research/pico-sdk/lib/tinyusb/src/class/audio/audio_device.c.obj
 .PHONY : Users/lino/Research/pico-sdk/lib/tinyusb/src/class/audio/audio_device.obj
 
@@ -1673,6 +1686,7 @@ help:
 	@echo "... bs2_default_bin"
 	@echo "... bs2_default_padded_checksummed_asm"
 	@echo "... bs2_default"
+	@echo "... espHelper"
 	@echo "... server"
 	@echo "... Users/lino/Research/pico-sdk/lib/tinyusb/src/class/audio/audio_device.obj"
 	@echo "... Users/lino/Research/pico-sdk/lib/tinyusb/src/class/audio/audio_device.i"

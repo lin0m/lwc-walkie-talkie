@@ -7,6 +7,8 @@ set(CMAKE_DEPENDS_GENERATOR "Unix Makefiles")
 # The top level Makefile was generated from the following files:
 set(CMAKE_MAKEFILE_DEPENDS
   "CMakeCache.txt"
+  "/Users/lino/Research/lightweight-cryptography/Code/include/espHelper/src/CMakeLists.txt"
+  "/Users/lino/Research/lightweight-cryptography/Code/include/espHelper/src/pico_sdk_import.cmake"
   "../CMakeLists.txt"
   "CMakeFiles/3.23.2/CMakeASMCompiler.cmake"
   "CMakeFiles/3.23.2/CMakeCCompiler.cmake"
@@ -214,6 +216,8 @@ set(CMAKE_MAKEFILE_PRODUCTS
   "pico-sdk/src/rp2040/hardware_regs/CMakeFiles/CMakeDirectoryInformation.cmake"
   "pico-sdk/src/rp2040/hardware_structs/CMakeFiles/CMakeDirectoryInformation.cmake"
   "pico-sdk/docs/CMakeFiles/CMakeDirectoryInformation.cmake"
+  "espHelper/CMakeFiles/CMakeDirectoryInformation.cmake"
+  "espHelper/pico-sdk/CMakeFiles/CMakeDirectoryInformation.cmake"
   )
 
 # Dependency information for all targets:
@@ -223,4 +227,5 @@ set(CMAKE_DEPEND_INFO_FILES
   "pico-sdk/src/rp2_common/boot_stage2/CMakeFiles/bs2_default.dir/DependInfo.cmake"
   "pico-sdk/src/rp2_common/boot_stage2/CMakeFiles/bs2_default_bin.dir/DependInfo.cmake"
   "pico-sdk/src/rp2_common/boot_stage2/CMakeFiles/bs2_default_padded_checksummed_asm.dir/DependInfo.cmake"
+  "espHelper/CMakeFiles/espHelper.dir/DependInfo.cmake"
   )
