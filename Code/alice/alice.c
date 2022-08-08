@@ -84,12 +84,12 @@ void createServer()
         input = uart_getc(UART_ID);
     }
     strcpy(currentString, "");
-    printf("Connected successfully");
-    while (true)
-    {
-        getTCPEsp(UART_ID, currentString, 256);
-        printf("%s", currentString);
-    }
+    printf("Connected successfully\n");
+    // while (true)
+    // {
+    //     getTCPEsp(UART_ID, currentString, 256);
+    //     printf("%s", currentString);
+    // }
 }
 int main(void)
 {
@@ -145,19 +145,24 @@ int main(void)
     /*-----------------------------------LISTEN TO SERVER----------------------------------*/
     // loop until message received
     createServer();
-    // const size_t SAMPLE_RATE = 44100;
-    const size_t SAMPLE_RATE = 8;
-    char result[SAMPLE_RATE / 2];
+    // const size_t SAMPLES = 44100;
+    const size_t SAMPLES = 1;
+    // the samples must be multiplied by 4 for each char that makes up a sample
+        // 2 chars for one half of sample
+    const size_t BUFFER = (SAMPLES * 4);
+    char result[BUFFER];
     int32_t lrData;
-    getTCPEsp(UART_ID, result, SAMPLE_RATE / 2);
     PIO pio = pio0;
     uint sm;
     initDac(&pio, &sm);
-    while (true) {
-        for (size_t i = 0; i < SAMPLE_RATE / 2; i += 4)
+    while (true)
+    {
+        getTCPEsp(UART_ID, result, BUFFER);
+        // if a reconnecting, the first sample will be wrong by 2 bytes but the rest are correct
+        for (size_t i = 0; i < BUFFER; i += 4)
         {
             lrData = result[i] << 24 | result[i + 1] << 16 | result[i + 2] << 8 | result[i + 3];
-            printf("data received is: %d\n", lrData);
+            printf("data received is: %08X\n", lrData);
             sendDac(pio, sm, lrData);
         }
     }
@@ -204,20 +209,23 @@ void get_dh_output(unsigned char *alice_identity_public_key, unsigned char *bob_
     // DH1 = DH(IKA, SPKB)
     ed25519_key_exchange(dh1, alice_identity_public_key, bob_spk_private_key);
 
-    //DH2 = DH(EKA, IKB)
+    // DH2 = DH(EKA, IKB)
     ed25519_key_exchange(dh2, alice_ephemeral_public_key, bob_id_private_key);
 
-    //DH3 = DH(EKA, SPKB)
+    // DH3 = DH(EKA, SPKB)
     ed25519_key_exchange(dh3, alice_ephemeral_public_key, bob_spk_private_key);
 
     // Concatenating dh outputs
-    // Concatenating dh outputs - because strcat, strncat and memcpy doesn't seem to work. 
-    
-    for(int j=0; j<96;j++)
+    // Concatenating dh outputs - because strcat, strncat and memcpy doesn't seem to work.
+
+    for (int j = 0; j < 96; j++)
     {
-        if(j<32) dh_final[j] = dh1[j]; 
-        if(j>=32 && j< 64)  dh_final[j] = dh2[j%32]; 
-        if(j>=64)  dh_final[j] = dh3[j%32]; 
+        if (j < 32)
+            dh_final[j] = dh1[j];
+        if (j >= 32 && j < 64)
+            dh_final[j] = dh2[j % 32];
+        if (j >= 64)
+            dh_final[j] = dh3[j % 32];
     }
 }
 
