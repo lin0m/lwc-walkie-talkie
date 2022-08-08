@@ -146,10 +146,13 @@ int main(void)
     // loop until message received
     createServer();
     // const size_t SAMPLES = 44100;
-    const size_t SAMPLES = 1;
+    // const size_t SAMPLES = 1;
     // the samples must be multiplied by 4 for each char that makes up a sample
         // 2 chars for one half of sample
-    const size_t BUFFER = (SAMPLES * 4);
+    // const size_t BUFFER = (SAMPLES * 4);
+    const size_t SIZE_OF_RETURN = 3;
+    const size_t MAX_BUFFER = (8192);
+    const size_t BUFFER = MAX_BUFFER - SIZE_OF_RETURN;
     char result[BUFFER];
     int32_t lrData;
     PIO pio = pio0;
@@ -158,8 +161,8 @@ int main(void)
     while (true)
     {
         getTCPEsp(UART_ID, result, BUFFER);
-        // if a reconnecting, the first sample will be wrong by 2 bytes but the rest are correct
-        for (size_t i = 0; i < BUFFER; i += 4)
+        // if a reconnecting, the first sample will be wrong by 2 or 4 bytes but the rest are correct
+        for (size_t i = 0; i < BUFFER - BUFFER % 4; i += 4)
         {
             lrData = result[i] << 24 | result[i + 1] << 16 | result[i + 2] << 8 | result[i + 3];
             printf("data received is: %08X\n", lrData);
