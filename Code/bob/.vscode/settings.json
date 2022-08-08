@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "mic.h": "c",
+        "esphelper.h": "c",
+        "type_traits": "c",
+        "mic.pio.h": "c"
+    }
+}

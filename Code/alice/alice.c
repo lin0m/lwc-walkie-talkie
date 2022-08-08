@@ -130,13 +130,13 @@ int main(void)
     /*-------------------------------------START X3DH--------------------------------------*/
     // loop until message received
 
-    while (ReceiveFromAlice(alice_identity_public_key, alice_ephemeral_public_key, ciphertext, 3) == 1)
-    {
-        /**
-         * Waiting for server to send response of the encrypted audio
-         */
-        continue;
-    }
+    // while (ReceiveFromAlice(alice_identity_public_key, alice_ephemeral_public_key, ciphertext, 3) == 1)
+    // {
+    //     /**
+    //      * Waiting for server to send response of the encrypted audio
+    //      */
+    //     continue;
+    // }
 
     get_dh_output(alice_identity_public_key, spk_private_key, id_private_key, alice_ephemeral_public_key, dh_final);
     get_shared_key(dh_final, SHA512, NULL, NULL, hex_hkdf_output, 128);
@@ -145,14 +145,16 @@ int main(void)
     /*-----------------------------------LISTEN TO SERVER----------------------------------*/
     // loop until message received
     createServer();
-    char result[44100 / 2];
+    // const size_t SAMPLE_RATE = 44100;
+    const size_t SAMPLE_RATE = 8;
+    char result[SAMPLE_RATE / 2];
     int32_t lrData;
-    getTCPEsp(UART_ID, result, 44100 / 2);
+    getTCPEsp(UART_ID, result, SAMPLE_RATE / 2);
     PIO pio = pio0;
     uint sm;
     initDac(&pio, &sm);
     while (true) {
-        for (size_t i = 0; i < 44100 / 2; i += 5)
+        for (size_t i = 0; i < SAMPLE_RATE / 2; i += 4)
         {
             lrData = result[i] << 24 | result[i + 1] << 16 | result[i + 2] << 8 | result[i + 3];
             printf("data received is: %d\n", lrData);
