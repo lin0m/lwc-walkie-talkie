@@ -170,8 +170,12 @@ int main(void)
             printf("%02X|", sampleArr[i]);
         }
         printf("\n");
-        while (uart_getc(UART_ID) != '>')
-            ;
+        char test;
+        test = uart_getc(UART_ID);
+        while (test != '>') {
+            printf("looping >: %c", test);
+            test = uart_getc(UART_ID);
+        }
         // data goes here:
         uart_puts(UART_ID, sampleArr);
     }
