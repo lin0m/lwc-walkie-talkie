@@ -128,7 +128,7 @@ int main(void)
     printf("initializing esp\n");
     
     createClient();
-    char sampleArr[SAMPLE_ARR_SIZE];
+    char sampleArr[BUFFER_SIZE];
     PIO pio;
     uint sm;
     initMic(&pio, &sm);
@@ -164,14 +164,13 @@ int main(void)
         strcat(sampleArr, "\r\n\0");
         printf("stuff sent is: ");
         // read a char at a time
-        for (uint64_t i = 0; i < SAMPLE_ARR_SIZE; i++)
+        for (uint64_t i = 0; i < BUFFER_SIZE; i++)
         {
             // printf("i is: %llu|", i);
             printf("%02X|", sampleArr[i]);
         }
         printf("\n");
         // data goes here:
-        // TODO: The code below won't work correctly; sampleArr is not a C string since it doesn't have a null character at the end
         uart_puts(UART_ID, sampleArr);
     }
 
