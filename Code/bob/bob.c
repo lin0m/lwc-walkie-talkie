@@ -176,6 +176,7 @@ int main(void)
             printf("looping >: %c", test);
             test = uart_getc(UART_ID);
         }
+        printf("looping >: %c", test);
         // data goes here:
         uart_puts(UART_ID, sampleArr);
     }
