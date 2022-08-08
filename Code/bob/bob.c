@@ -8,7 +8,6 @@
 #include "../X3DH/ed25519/src/ed25519.h"
 #include "../X3DH/sha/rfc6234/sha.h"
 
-
 #define UART_ID uart1
 #define BAUD_RATE 115200
 #define UART_TX_PIN 4
@@ -126,7 +125,7 @@ int main(void)
         sleep_ms(1000);
     }
     printf("initializing esp\n");
-    
+
     createClient();
     char sampleArr[BUFFER_SIZE];
     PIO pio;
@@ -144,9 +143,10 @@ int main(void)
             sampleArr[i] = (sample >> 24) & 0x000000FF;
             sampleArr[i + 1] = (sample >> 16) & 0x000000FF;
             sampleArr[i + 2] = (sample >> 8) & 0x000000FF;
-            sampleArr[i + 3] = (sample) & 0x000000FF;
+            sampleArr[i + 3] = (sample)&0x000000FF;
             // printf("i is: %llu\n", i);
-            if (!printTimer(&current, 1000*10)) {
+            if (!printTimer(&current, 1000 * 10))
+            {
                 // printf("sampleArr is: ");
                 // for (size_t j = 0; j < 4; j++)
                 // {
@@ -170,6 +170,8 @@ int main(void)
             printf("%02X|", sampleArr[i]);
         }
         printf("\n");
+        while (uart_getc(UART_ID) != '>')
+            ;
         // data goes here:
         uart_puts(UART_ID, sampleArr);
     }
