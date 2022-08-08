@@ -46,6 +46,51 @@ void createClient()
         printf(currentString);
     }
 }
+void sendMic(absolute_time_t *current,
+             int32_t *sample, char *sampleArr,
+             PIO *pio, uint *sm,
+             const size_t SAMPLE_ARR_SIZE,
+             char *cipCommand,
+             const size_t BUFFER_SIZE)
+{
+
+    *current = get_absolute_time();
+    // fill in 32 bits at a time; 4 chars at once
+    for (uint64_t i = 0; i < SAMPLE_ARR_SIZE - SAMPLE_ARR_SIZE % 4; i += 4)
+    {
+        *sample = getSingleSampleBlocking(pio, sm);
+        sampleArr[i] = (*sample >> 24) & 0x000000FF;
+        sampleArr[i + 1] = (*sample >> 16) & 0x000000FF;
+        sampleArr[i + 2] = (*sample >> 8) & 0x000000FF;
+        sampleArr[i + 3] = (*sample) & 0x000000FF;
+        // printf("i is: %llu\n", i);
+        if (!printTimer(current, 1000 * 10))
+        {
+            // printf("sampleArr is: ");
+            // for (size_t j = 0; j < 4; j++)
+            // {
+            //     printf("%02X", sampleArr[i + j]);
+            // }
+            // printf("\n");
+            *current = get_absolute_time();
+        }
+    }
+    // send half a second buffer for now; later change it to fit in tinyJambu
+    sendCip(BUFFER_SIZE, cipCommand);
+    uart_puts(UART_ID, cipCommand);
+    printf("Command is: %s", cipCommand);
+    // strcat(sampleArr, "\r\n\0");
+    printf("stuff sent is: ");
+    // read a char at a time
+    for (uint64_t i = 0; i < BUFFER_SIZE; i++)
+    {
+        // printf("i is: %llu|", i);
+        printf("%02X|", sampleArr[i]);
+    }
+    printf("\n");
+    // data goes here:
+    uart_puts(UART_ID, sampleArr);
+}
 void encrypt(const unsigned char *m, unsigned long long mlen, const unsigned char *k);
 int FetchPreKeyBundle(unsigned char *bob_id_public_key, unsigned char *bob_spk_public_key, unsigned char *bob_spk_signature, int message_type){};
 void get_dh_output(unsigned char *bob_id_public_key, unsigned char *ephemeral_private_key, unsigned char *id_private_key,
@@ -135,42 +180,7 @@ int main(void)
     absolute_time_t current = get_absolute_time();
     while (true)
     {
-        current = get_absolute_time();
-        // fill in 32 bits at a time; 4 chars at once
-        for (uint64_t i = 0; i < SAMPLE_ARR_SIZE - SAMPLE_ARR_SIZE % 4; i += 4)
-        {
-            sample = getSingleSampleBlocking(pio, sm);
-            sampleArr[i] = (sample >> 24) & 0x000000FF;
-            sampleArr[i + 1] = (sample >> 16) & 0x000000FF;
-            sampleArr[i + 2] = (sample >> 8) & 0x000000FF;
-            sampleArr[i + 3] = (sample)&0x000000FF;
-            // printf("i is: %llu\n", i);
-            if (!printTimer(&current, 1000 * 10))
-            {
-                // printf("sampleArr is: ");
-                // for (size_t j = 0; j < 4; j++)
-                // {
-                //     printf("%02X", sampleArr[i + j]);
-                // }
-                // printf("\n");
-                current = get_absolute_time();
-            }
-        }
-        // send half a second buffer for now; later change it to fit in tinyJambu
-        sendCip(BUFFER_SIZE, cipCommand);
-        uart_puts(UART_ID, cipCommand);
-        printf("Command is: %s", cipCommand);
-        // strcat(sampleArr, "\r\n\0");
-        printf("stuff sent is: ");
-        // read a char at a time
-        for (uint64_t i = 0; i < BUFFER_SIZE; i++)
-        {
-            // printf("i is: %llu|", i);
-            printf("%02X|", sampleArr[i]);
-        }
-        printf("\n");
-        // data goes here:
-        uart_puts(UART_ID, sampleArr);
+        sendMic(&current, &sample, sampleArr, &pio, &sm, SAMPLE_ARR_SIZE, cipCommand, BUFFER_SIZE);
     }
 
     const unsigned char m[] = {0x00};                                                                                           // plaintext
