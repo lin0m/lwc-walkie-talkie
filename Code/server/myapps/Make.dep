@@ -1,0 +1,49 @@
+myapps_main.c.Users.lino.Research.lightweight-cryptography.Code.server.myapps.o: \
+ myapps_main.c \
+ /Users/lino/Research/sony-sdk/spresense/nuttx/include/nuttx/config.h \
+ /Users/lino/Research/sony-sdk/spresense/nuttx/include/stdio.h \
+ /Users/lino/Research/sony-sdk/spresense/nuttx/include/sys/types.h \
+ /Users/lino/Research/sony-sdk/spresense/nuttx/include/nuttx/compiler.h \
+ /Users/lino/Research/sony-sdk/spresense/nuttx/include/stdint.h \
+ /Users/lino/Research/sony-sdk/spresense/nuttx/include/arch/types.h \
+ /Users/lino/Research/sony-sdk/spresense/nuttx/include/arch/inttypes.h \
+ /Users/lino/Research/sony-sdk/spresense/nuttx/include/limits.h \
+ /Users/lino/Research/sony-sdk/spresense/nuttx/include/arch/limits.h \
+ /Users/lino/spresenseenv/usr/lib/gcc/arm-none-eabi/9.2.1/include/stdarg.h \
+ /Users/lino/Research/sony-sdk/spresense/nuttx/include/time.h \
+ /Users/lino/Research/sony-sdk/spresense/nuttx/include/nuttx/fs/fs.h \
+ /Users/lino/Research/sony-sdk/spresense/nuttx/include/stdbool.h \
+ /Users/lino/Research/sony-sdk/spresense/nuttx/include/nuttx/semaphore.h \
+ /Users/lino/Research/sony-sdk/spresense/nuttx/include/errno.h \
+ /Users/lino/Research/sony-sdk/spresense/nuttx/include/semaphore.h \
+ /Users/lino/Research/sony-sdk/spresense/nuttx/include/nuttx/clock.h \
+ /Users/lino/Research/sony-sdk/spresense/nuttx/include/nuttx/sched.h \
+ /Users/lino/Research/sony-sdk/spresense/nuttx/include/queue.h \
+ /Users/lino/Research/sony-sdk/spresense/nuttx/include/sched.h \
+ /Users/lino/Research/sony-sdk/spresense/nuttx/include/strings.h \
+ /Users/lino/Research/sony-sdk/spresense/nuttx/include/string.h \
+ /Users/lino/Research/sony-sdk/spresense/nuttx/include/stddef.h \
+ /Users/lino/Research/sony-sdk/spresense/nuttx/include/nuttx/b2c.h \
+ /Users/lino/Research/sony-sdk/spresense/nuttx/include/queue.h \
+ /Users/lino/Research/sony-sdk/spresense/nuttx/include/signal.h \
+ /Users/lino/Research/sony-sdk/spresense/nuttx/include/pthread.h \
+ /Users/lino/Research/sony-sdk/spresense/nuttx/include/sys/prctl.h \
+ /Users/lino/Research/sony-sdk/spresense/nuttx/include/unistd.h \
+ /Users/lino/Research/sony-sdk/spresense/nuttx/include/nuttx/irq.h \
+ /Users/lino/Research/sony-sdk/spresense/nuttx/include/arch/irq.h \
+ /Users/lino/Research/sony-sdk/spresense/nuttx/include/arch/chip/irq.h \
+ /Users/lino/Research/sony-sdk/spresense/nuttx/include/arch/armv7-m/irq.h \
+ /Users/lino/Research/sony-sdk/spresense/nuttx/include/arch/armv7-m/nvicpri.h \
+ /Users/lino/Research/sony-sdk/spresense/nuttx/include/arch/chip/chip.h \
+ /Users/lino/Research/sony-sdk/spresense/nuttx/include/arch/armv7-m/irq_cmnvector.h \
+ /Users/lino/Research/sony-sdk/spresense/nuttx/include/nuttx/wdog.h \
+ /Users/lino/Research/sony-sdk/spresense/nuttx/include/nuttx/mm/shm.h \
+ /Users/lino/Research/sony-sdk/spresense/nuttx/include/nuttx/mm/gran.h \
+ /Users/lino/Research/sony-sdk/spresense/nuttx/include/nuttx/net/net.h \
+ /Users/lino/Research/sony-sdk/spresense/nuttx/include/sys/socket.h \
+ /Users/lino/Research/sony-sdk/spresense/nuttx/include/sys/uio.h \
+ /Users/lino/Research/sony-sdk/spresense/nuttx/include/arch/arch.h \
+ /Users/lino/Research/sony-sdk/spresense/nuttx/include/nuttx/pgalloc.h \
+ /Users/lino/Research/sony-sdk/spresense/nuttx/include/nuttx/addrenv.h
+# No files specified for dependency generation
+# No files specified for dependency generation
