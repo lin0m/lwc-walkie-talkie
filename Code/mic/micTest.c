@@ -28,17 +28,6 @@ void sendTimer(const int16_t MAX_VALUE_I2S, const double C_PERIOD_MS, PIO pio, u
         *current = get_absolute_time();
     }
 }
-bool printTimer(absolute_time_t *current, int64_t waitTime_us)
-{
-    if (absolute_time_diff_us(*current, get_absolute_time()) > waitTime_us)
-    {
-        return true;
-    }
-    else
-    {
-        return false;
-    }
-}
 // void initMic(PIO *pio, uint *sm)
 // {
 //     *pio = pio0;
