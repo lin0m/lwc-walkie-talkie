@@ -108,9 +108,8 @@ int main(void)
     /*---------------LOOP "ENCRYPT AUDIO" & "SEND ENCRYPTED AUDIO" FOREVER----------------*/
     /*-----------------------------------ENCRYPT AUDIO------------------------------------*/
     // variables
-    const size_t SAMPLE_FREQUENCY = 44100;
-    const size_t BYTES_PER_SAMPLE = 4;
-    const size_t SIZE_OF_RETURN = 3;
+    // const size_t SIZE_OF_RETURN = 3;
+    const size_t SIZE_OF_RETURN = 0;
     // const size_t BUFFER_SIZE = ((SAMPLE_FREQUENCY * BYTES_PER_SAMPLE) / 2);
     const size_t BUFFER_SIZE = 8192;
     // below stores 8, 32-bit values
@@ -132,6 +131,7 @@ int main(void)
     uint sm;
     initMic(&pio, &sm);
     int32_t sample;
+    char cipCommand[80];
     absolute_time_t current = get_absolute_time();
     while (true)
     {
@@ -156,12 +156,11 @@ int main(void)
                 current = get_absolute_time();
             }
         }
-        char cipCommand[80];
         // send half a second buffer for now; later change it to fit in tinyJambu
         sendCip(BUFFER_SIZE, cipCommand);
         uart_puts(UART_ID, cipCommand);
         printf("Command is: %s", cipCommand);
-        strcat(sampleArr, "\r\n\0");
+        // strcat(sampleArr, "\r\n\0");
         printf("stuff sent is: ");
         // read a char at a time
         for (uint64_t i = 0; i < BUFFER_SIZE; i++)
@@ -170,13 +169,6 @@ int main(void)
             printf("%02X|", sampleArr[i]);
         }
         printf("\n");
-        char test;
-        test = uart_getc(UART_ID);
-        while (test != '>') {
-            printf("looping >: %c", test);
-            test = uart_getc(UART_ID);
-        }
-        printf("looping >: %c", test);
         // data goes here:
         uart_puts(UART_ID, sampleArr);
     }

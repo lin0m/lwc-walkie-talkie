@@ -127,6 +127,7 @@ int getTCPEsp(uart_inst_t *uart_ID, char *result, size_t resultCapacity)
         // printf("amount: %s", amount);
         input = uart_getc(uart_ID);
     }
+    // TODO no bounds checking here, there might be problems later
     for (size_t i = 0; i < atoi(amount); i++)
     {
         input = uart_getc(uart_ID);
@@ -149,6 +150,7 @@ void initEsp() {
  * @param CIP_Command 
  */
 void sendCip(const uint64_t numberOfBytes, char* command) {
+    strcpy(command, "");
     strcpy(command, "AT+CIPSEND=");
     char charBytesToSend[80];
     sprintf(charBytesToSend, "%llu", numberOfBytes);
