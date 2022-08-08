@@ -899,7 +899,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "71"
+			"value" : "73"
 		},
 		{
 			"name" : "CMAKE_OBJCOPY",
@@ -1483,7 +1483,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : " /Users/lino/Research/pico-sdk/src/rp2_common/cmsis /Users/lino/Research/pico-sdk/src/rp2040/hardware_regs /Users/lino/Research/pico-sdk/src/rp2_common/cmsis /Users/lino/Research/pico-sdk/src/rp2040/hardware_regs /Users/lino/Research/pico-sdk/src/rp2_common/cmsis /Users/lino/Research/pico-sdk/src/rp2040/hardware_regs"
+			"value" : " /Users/lino/Research/pico-sdk/src/rp2_common/cmsis /Users/lino/Research/pico-sdk/src/rp2040/hardware_regs /Users/lino/Research/pico-sdk/src/rp2_common/cmsis /Users/lino/Research/pico-sdk/src/rp2040/hardware_regs /Users/lino/Research/pico-sdk/src/rp2_common/cmsis /Users/lino/Research/pico-sdk/src/rp2040/hardware_regs /Users/lino/Research/pico-sdk/src/rp2_common/cmsis /Users/lino/Research/pico-sdk/src/rp2040/hardware_regs"
 		},
 		{
 			"name" : "PICO_DOXYGEN_PATHS",
@@ -1700,6 +1700,42 @@
 			],
 			"type" : "INTERNAL",
 			"value" : "5c9eef28087f51fa6876ba7b00dbc150"
+		},
+		{
+			"name" : "espHelper_BINARY_DIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Value Computed by CMake"
+				}
+			],
+			"type" : "STATIC",
+			"value" : "/Users/lino/Research/lightweight-cryptography/Code/server/build/espHelper"
+		},
+		{
+			"name" : "espHelper_IS_TOP_LEVEL",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Value Computed by CMake"
+				}
+			],
+			"type" : "STATIC",
+			"value" : "OFF"
+		},
+		{
+			"name" : "espHelper_SOURCE_DIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Value Computed by CMake"
+				}
+			],
+			"type" : "STATIC",
+			"value" : "/Users/lino/Research/lightweight-cryptography/Code/include/espHelper/src"
 		},
 		{
 			"name" : "pico_sdk_BINARY_DIR",

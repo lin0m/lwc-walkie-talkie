@@ -66,4 +66,12 @@ CMakeFiles/server.dir/server.c.obj: \
  /Users/lino/Research/pico-sdk/src/rp2040/hardware_structs/include/hardware/structs/uart.h \
  /Users/lino/Research/pico-sdk/src/rp2040/hardware_regs/include/hardware/regs/uart.h \
  /Users/lino/Research/pico-sdk/src/rp2040/hardware_regs/include/hardware/regs/dreq.h \
- /Users/lino/Research/pico-sdk/src/rp2_common/pico_stdio_usb/include/pico/stdio_usb.h
+ /Users/lino/Research/pico-sdk/src/rp2_common/pico_stdio_usb/include/pico/stdio_usb.h \
+ /usr/local/Cellar/arm-none-eabi-gcc/10.3-2021.07/gcc/arm-none-eabi/include/string.h \
+ /usr/local/Cellar/arm-none-eabi-gcc/10.3-2021.07/gcc/arm-none-eabi/include/sys/_locale.h \
+ /usr/local/Cellar/arm-none-eabi-gcc/10.3-2021.07/gcc/arm-none-eabi/include/strings.h \
+ /usr/local/Cellar/arm-none-eabi-gcc/10.3-2021.07/gcc/arm-none-eabi/include/sys/string.h \
+ /Users/lino/Research/lightweight-cryptography/Code/server/../include/espHelper/src/espHelper.h \
+ /usr/local/Cellar/arm-none-eabi-gcc/10.3-2021.07/gcc/arm-none-eabi/include/stdlib.h \
+ /usr/local/Cellar/arm-none-eabi-gcc/10.3-2021.07/gcc/arm-none-eabi/include/machine/stdlib.h \
+ /usr/local/Cellar/arm-none-eabi-gcc/10.3-2021.07/gcc/arm-none-eabi/include/alloca.h

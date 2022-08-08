@@ -32,3 +32,8 @@ target_link_libraries(server pico_stdlib)
 
 pico_add_extra_outputs(server)
 
+add_subdirectory(../include/espHelper/src espHelper)
+target_link_libraries(server espHelper)
+target_link_libraries(espHelper pico_stdlib)
+target_include_directories(espHelper PUBLIC "../include/espHelper/src")
+

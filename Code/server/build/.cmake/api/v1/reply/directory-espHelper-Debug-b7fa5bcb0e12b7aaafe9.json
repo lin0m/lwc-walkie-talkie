@@ -1,0 +1,14 @@
+{
+	"backtraceGraph" : 
+	{
+		"commands" : [],
+		"files" : [],
+		"nodes" : []
+	},
+	"installers" : [],
+	"paths" : 
+	{
+		"build" : "espHelper",
+		"source" : "/Users/lino/Research/lightweight-cryptography/Code/include/espHelper/src"
+	}
+}

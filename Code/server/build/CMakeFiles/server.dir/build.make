@@ -1169,6 +1169,7 @@ server.elf: CMakeFiles/server.dir/Users/lino/Research/pico-sdk/src/rp2_common/pi
 server.elf: CMakeFiles/server.dir/Users/lino/Research/pico-sdk/src/rp2_common/pico_unique_id/unique_id.c.obj
 server.elf: CMakeFiles/server.dir/Users/lino/Research/pico-sdk/src/rp2_common/hardware_flash/flash.c.obj
 server.elf: CMakeFiles/server.dir/build.make
+server.elf: espHelper/libespHelper.a
 server.elf: pico-sdk/src/rp2_common/boot_stage2/bs2_default_padded_checksummed.S
 server.elf: CMakeFiles/server.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/Users/lino/Research/lightweight-cryptography/Code/server/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_70) "Linking CXX executable server.elf"
