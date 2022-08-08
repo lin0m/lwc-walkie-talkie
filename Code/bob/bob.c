@@ -180,7 +180,9 @@ int main(void)
     absolute_time_t current = get_absolute_time();
     while (true)
     {
-        sendMic(&current, &sample, sampleArr, &pio, &sm, SAMPLE_ARR_SIZE, cipCommand, BUFFER_SIZE);
+        // sendMic(&current, &sample, sampleArr, &pio, &sm, SAMPLE_ARR_SIZE, cipCommand, BUFFER_SIZE);
+        sendCip(4, cipCommand);
+        uart_puts(UART_ID, "test");
     }
 
     const unsigned char m[] = {0x00};                                                                                           // plaintext
