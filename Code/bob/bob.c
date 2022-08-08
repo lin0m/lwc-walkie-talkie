@@ -181,8 +181,10 @@ int main(void)
     while (true)
     {
         // sendMic(&current, &sample, sampleArr, &pio, &sm, SAMPLE_ARR_SIZE, cipCommand, BUFFER_SIZE);
-        sendCip(4, cipCommand);
+        // sendCip(4, cipCommand);
+        strcpy(cipCommand, "AT+CIPSEND=4\r\n");
         printf("cipCommand is: %s", cipCommand);
+        uart_puts(UART_ID, cipCommand);
         printf("sending test\n");
         uart_puts(UART_ID, "test");
     }
