@@ -64,10 +64,10 @@ void createClient()
         printf(currentString);
     }
     printf("\nconnecting to wifi\n");
-    uart_puts(UART_ID, "AT+CWJAP=\"expressif\",\"1234567890\"\"\r\n");
+    uart_puts(UART_ID, "AT+CWJAP=\"expressif\",\"1234567890\"\r\n");
     while (!waitUntilReady(currentString, 256, UART_ID))
     {
-        uart_puts(UART_ID, "AT+CWJAP=\"expressif\",\"1234567890\"\"\r\n");
+        uart_puts(UART_ID, "AT+CWJAP=\"expressif\",\"1234567890\"\r\n");
         printf(currentString);
     }
     printf("requesting ip info\n");
