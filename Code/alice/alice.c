@@ -187,15 +187,24 @@ int main(void)
         //     printf("%X", result[i]);
         // }
         // printf("\n");
+        
+        // combine every 4 chars into a 32 bit sample and send it to the dac
         printf("data as chars is: %s\n", result);
-        if (strlen(result) > 0) {
-            for (int i = 0; i < (strlen(result) - SIZE_OF_NULL_CHAR) - ((strlen(result) - SIZE_OF_NULL_CHAR) % 4); i += 4)
-            {
-                lrData = result[i] << 24 | result[i + 1] << 16 | result[i + 2] << 8 | result[i + 3];
-                printf("data received is: %08X\n", lrData);
-                sendDac(pio, sm, lrData);
-            }
+        for (size_t i = 0; i < BUFFER - (BUFFER % 4); i += 4)
+        {
+            lrData = result[i] << 24 | result[i + 1] << 16 | result[i + 2] << 8 | result[i + 3];
+            printf("data received is: %08X\n", lrData);
+            sendDac(pio, sm, lrData);
         }
+        
+        // if (strlen(result) > 0) {
+        //     for (int i = 0; i < (strlen(result) - SIZE_OF_NULL_CHAR) - ((strlen(result) - SIZE_OF_NULL_CHAR) % 4); i += 4)
+        //     {
+        //         lrData = result[i] << 24 | result[i + 1] << 16 | result[i + 2] << 8 | result[i + 3];
+        //         printf("data received is: %08X\n", lrData);
+        //         sendDac(pio, sm, lrData);
+        //     }
+        // }
     }
 
     /*-----------------------------------DECRYPT AUDIO------------------------------------*/
