@@ -215,6 +215,7 @@ int main(void)
         uart_puts(UART_ID, "\r\n");
         printf("sending test\n");
         uart_puts(UART_ID, testSample);
+        uart_puts(UART_ID, "\r\n");
     }
 
     const unsigned char m[] = {0x00};                                                                                           // plaintext

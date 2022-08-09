@@ -1,6 +1,5 @@
 #include "espHelper.h"
 
-
 /**
  * @brief searches for a string once
  * @note the uart_ID paramter can be replaced with a char if the caller provides the character from uart
@@ -96,7 +95,8 @@ bool waitUntilReady(char *currentString, const size_t length, uart_inst_t *uart_
  * @brief parses and gets the data from esp tcp server and returns the link ID
  *
  * @param uart_ID uart instance to get from
- * @param result the data from esp tcp server; cleared when function starts
+ * @param result the data from esp tcp server; cleared when function starts This must be large enough to fit data and a null character at the end
+ * The function adds a null character at the end.
  * @param resultCapacity capacity of result; unused for now
  * @return int - the link id, -1 if error
  */
@@ -130,18 +130,20 @@ int getTCPEsp(uart_inst_t *uart_ID, char *result, size_t resultCapacity)
         input = uart_getc(uart_ID);
     }
     // TODO no bounds checking here, there might be problems later
-    printf ("amount of data is: %d", atoi(amount));
+    printf("amount of data is: %d", atoi(amount));
     printf("result: ");
     for (size_t i = 0; i < atoi(amount); i++)
     {
-        printf("i is: %d", i);
+        printf("i is: %d\n", i);
         input = uart_getc(uart_ID);
         result[i] = input;
         printf("%c", input);
     }
+    result[atoi(amount)] = '\0';
     return atoi(linkID);
 }
-void initEsp() {
+void initEsp()
+{
     stdio_init_all();
     uart_init(UART_ID, BAUD_RATE);
     gpio_set_function(UART_TX_PIN, GPIO_FUNC_UART);
@@ -149,11 +151,12 @@ void initEsp() {
 }
 /**
  * @brief constructs the cip command based on the number of bytes to send
- * 
- * @param numberOfBytes 
- * @param command 
+ *
+ * @param numberOfBytes
+ * @param command
  */
-void sendCip(const uint64_t numberOfBytes, char* command) {
+void sendCip(const uint64_t numberOfBytes, char *command)
+{
     // strcpy(command, "");
     strcpy(command, "AT+CIPSEND=");
     // printf("start of command is: %s\n", command);
