@@ -57,6 +57,7 @@ void createServer()
     uart_puts(UART_ID, "AT+CWSAP=\"expressif\",\"1234567890\",5,3\r\n");
     while (!waitUntilReady(currentString, 256, UART_ID))
     {
+        printf("%s\n", currentString);
         uart_puts(UART_ID, "AT+CWSAP=\"expressif\",\"1234567890\",5,3\r\n");
     }
     // for (size_t i = 0; i < 10; i++)

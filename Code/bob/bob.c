@@ -17,12 +17,24 @@ void createClient()
 {
     // initialize esp client
     initEsp();
+    // for (size_t i = 0; i < 10; i++)
+    // {
+    //     printf("%d\n", i);
+    //     sleep_ms(1000);
+    // }
     char currentString[256] = "";
     printf("setting station mode\n");
     uart_puts(UART_ID, "AT+CWMODE=1\r\n");
     while (!waitUntilReady(currentString, 256, UART_ID))
     {
         uart_puts(UART_ID, "AT+CWMODE=1\r\n");
+        printf(currentString);
+    }
+    printf("enabling single connection mode\n");
+    uart_puts(UART_ID, "AT+CIPMUX=0\r\n");
+    while (!waitUntilReady(currentString, 256, UART_ID))
+    {
+        uart_puts(UART_ID, "AT+CIPMUX=0\r\n");
         printf(currentString);
     }
     printf("disconnecting from AP\n");
@@ -33,10 +45,10 @@ void createClient()
         printf(currentString);
     }
     printf("\nconnecting to wifi\n");
-    uart_puts(UART_ID, "AT+CWJAP=\"expressif\",\"1234567890\"\r\n");
+    uart_puts(UART_ID, "AT+CWJAP=\"expressif\",\"1234567890\"\"\r\n");
     while (!waitUntilReady(currentString, 256, UART_ID))
     {
-        uart_puts(UART_ID, "AT+CWJAP=\"expressif\",\"1234567890\"\r\n");
+        uart_puts(UART_ID, "AT+CWJAP=\"expressif\",\"1234567890\"\"\r\n");
         printf(currentString);
     }
     printf("requesting ip info\n");
@@ -46,19 +58,32 @@ void createClient()
         uart_puts(UART_ID, "AT+CIPSTA?\r\n");
         printf(currentString);
     }
+    printf(currentString);
+    for (size_t i = 0; i < 10; i++)
+    {
+        printf("%d\n", i);
+        sleep_ms(1000);
+    }
     // change the ip based on the previous command output
     printf("connecting to server\n");
-    uart_puts(UART_ID, "AT+CIPSTART=\"TCP\",\"192.168.4.1\",2399\r\n");
+    uart_puts(UART_ID, "AT+CIPSTART=\"TCP\",\"192.168.1.128\",56506\r\n");
     while (!waitUntilReady(currentString, 256, UART_ID))
     {
-        uart_puts(UART_ID, "AT+CIPSTART=\"TCP\",\"192.168.4.1\",2399\r\n");
+        uart_puts(UART_ID, "AT+CIPSTART=\"TCP\",\"192.168.1.128\",56506\r\n");
         printf(currentString);
     }
+    // printf("disabling server\n");
+    // uart_puts(UART_ID, "AT+CIPSERVER=0\r\n");
+    // while (!waitUntilReady(currentString, 256, UART_ID))
+    // {
+    //     uart_puts(UART_ID, "AT+CIPSERVER=0\r\n");
+    //     printf(currentString);
+    // }
 }
 /**
  * @brief get samples, store into sampleArr, then send it to alice
  * @note variables initialized outside
- * 
+ *
  * @param current time variable
  * @param sample single sample mic - 32 bit value
  * @param sampleArr array of samples to send
@@ -68,25 +93,32 @@ void createClient()
  * @param cipCommand at command to send
  * @param BUFFER_SIZE size of the whole array being sent
  */
-void sendMic(absolute_time_t *current,
-             int32_t sample, char *sampleArr,
+void sendMic(absolute_time_t *current, char *sampleArr,
              PIO *pio, uint *sm,
              const size_t SAMPLE_ARR_SIZE,
              char *cipCommand,
              const size_t BUFFER_SIZE)
 {
-
+    int32_t sample;
+    char espResponse[256];
     *current = get_absolute_time();
     // fill in 32 bits at a time; 4 chars at once
     printf("beginning to get sample\n");
-    for (uint64_t i = 0; i < SAMPLE_ARR_SIZE - (SAMPLE_ARR_SIZE % 4); i += 4)
+    strcpy(sampleArr, "");
+    for (uint64_t i = 0; i < (SAMPLE_ARR_SIZE) - ((SAMPLE_ARR_SIZE) % 4); i += 4)
     {
         sample = getSingleSampleBlocking(*pio, *sm);
         sampleArr[i] = (sample >> 24) & 0x000000FF;
         sampleArr[i + 1] = (sample >> 16) & 0x000000FF;
         sampleArr[i + 2] = (sample >> 8) & 0x000000FF;
-        sampleArr[i + 3] = (sample) & 0x000000FF;
-        // printf("i is: %llu\n", i);
+        sampleArr[i + 3] = (sample)&0x000000FF;
+        printf("i is: %llu\n", i);
+        printf("sampleArr is: ");
+        for (size_t j = 0; j < 4; j++)
+        {
+            printf("%02X", sampleArr[i + j]);
+        }
+        printf("\n");
         if (!printTimer(current, 1000 * 10))
         {
             // printf("sampleArr is: ");
@@ -98,13 +130,36 @@ void sendMic(absolute_time_t *current,
             *current = get_absolute_time();
         }
     }
-    // send half a second buffer for now; later change it to fit in tinyJambu
+    // sampleArr[33] = '\0';
     sendCip(BUFFER_SIZE, cipCommand);
     printf("Command is: %s", cipCommand);
+    // printf("length of sampleArr is: %d", strlen(sampleArr));
     uart_puts(UART_ID, cipCommand);
-    uart_puts(UART_ID, "\r\n");
-    // strcat(sampleArr, "\r\n\0");
-    printf("stuff sent is: ");
+    // TODO repeat the cip command if there's an error
+
+    printf("waiting for OK\n");
+    while (!waitUntilReady(espResponse, 256, UART_ID))
+    {
+        uart_puts(UART_ID, cipCommand);
+        // printf("%s", espResponse);
+    }
+    printf("found OK, ready for data\n");
+    for (size_t i = 0; i < BUFFER_SIZE; i++)
+    {
+        uart_putc(UART_ID, sampleArr[i]);
+    }
+    // uart_puts(UART_ID, sampleArr);
+    strcpy(espResponse, "");
+    printf("sent data waiting for SEND OK\n");
+    while (!searchStringOnce("SEND OK", espResponse))
+    {
+        char input;
+        input = uart_getc(UART_ID);
+        // printf("%s", espResponse);
+        strncat(espResponse, &input, 1);
+    }
+    strcpy(espResponse, "");
+    printf("SUCCESS, stuff sent is: ");
     // read a char at a time
     for (uint64_t i = 0; i < BUFFER_SIZE; i++)
     {
@@ -112,8 +167,6 @@ void sendMic(absolute_time_t *current,
         printf("%02X|", sampleArr[i]);
     }
     printf("\n");
-    // data goes here:
-    uart_puts(UART_ID, sampleArr);
 }
 void encrypt(const unsigned char *m, unsigned long long mlen, const unsigned char *k);
 int FetchPreKeyBundle(unsigned char *bob_id_public_key, unsigned char *bob_spk_public_key, unsigned char *bob_spk_signature, int message_type){};
@@ -177,45 +230,59 @@ int main(void)
     /*---------------LOOP "ENCRYPT AUDIO" & "SEND ENCRYPTED AUDIO" FOREVER----------------*/
     /*-----------------------------------ENCRYPT AUDIO------------------------------------*/
     // variables
-    // const size_t SIZE_OF_RETURN = 3;
-    const size_t SIZE_OF_RETURN = 0;
+    // const size_t SIZE_OF_END = 3;
+    const size_t SIZE_OF_END = 1;
     // const size_t BUFFER_SIZE = ((SAMPLE_FREQUENCY * BYTES_PER_SAMPLE) / 2);
-    const size_t BUFFER_SIZE = 8192;
+    const size_t BUFFER_SIZE = 32;
     // below stores 8, 32-bit values
     // const size_t BUFFER_SIZE = ((BYTES_PER_SAMPLE) * 8);
 
-    // const size_t SAMPLE_ARR_SIZE = BUFFER_SIZE + SIZE_OF_RETURN;
-    const size_t SAMPLE_ARR_SIZE = BUFFER_SIZE - SIZE_OF_RETURN;
+    // const size_t SAMPLE_ARR_SIZE = BUFFER_SIZE + SIZE_OF_END;
+    const size_t SAMPLE_ARR_SIZE = BUFFER_SIZE + SIZE_OF_END;
     // there are 8 samples, each 4 bytes and each char is a byte, so there should be (8 * 4) / (1char/1byte) chars
-    for (size_t i = 0; i < 10; i++)
-    {
-        printf("%d\n", i);
-        sleep_ms(1000);
-    }
+    // for (size_t i = 0; i < 10; i++)
+    // {
+    //     printf("%d\n", i);
+    //     sleep_ms(1000);
+    // }
     printf("initializing esp\n");
 
     createClient();
     printf("init esp complete\n");
-    char sampleArr[BUFFER_SIZE];
+    char sampleArr[SAMPLE_ARR_SIZE];
     PIO pio;
     uint sm;
     initMic(&pio, &sm);
-    int32_t sample;
+    // int32_t sample;
     char cipCommand[80];
     absolute_time_t current = get_absolute_time();
     char testSample[] = {0xFF, 0xFF, 0x00, 0x00};
+    char espResponse[256];
     while (true)
     {
-        // sendMic(&current, sample, sampleArr, &pio, &sm, SAMPLE_ARR_SIZE, cipCommand, BUFFER_SIZE);
-        sendCip(4, cipCommand);
-        // strcpy(cipCommand, "AT+CIPSEND=4\r\n");
-        printf("cipCommand is: %s", cipCommand);
-
-        uart_puts(UART_ID, cipCommand);
-        uart_puts(UART_ID, "\r\n");
-        printf("sending test\n");
-        uart_puts(UART_ID, testSample);
-        uart_puts(UART_ID, "\r\n");
+        sendMic(&current, sampleArr, &pio, &sm, SAMPLE_ARR_SIZE, cipCommand, BUFFER_SIZE);
+        // to get this working, first send the at command (cipsend), then wait for an OK, then send the data, then wait for a "SEND OK" then repeat
+        // sendCip(4, cipCommand);
+        // printf("cipCommand is: %s", cipCommand);
+        // // strcat(cipCommand, "\r\n");
+        // uart_puts(UART_ID, cipCommand);
+        // while (!waitUntilReady(espResponse, 256, UART_ID)) {
+        //     uart_puts(UART_ID, cipCommand);
+        //     printf("%s", espResponse);
+        // }
+        // // uart_puts(UART_ID, "\r\n");
+        // printf("sending test\n");
+        // uart_puts(UART_ID, "test\r\n");
+        // strcpy(espResponse, "");
+        // printf("waiting for SEND OK\n");
+        // while (!searchStringOnce("SEND OK", espResponse)) {
+        //     char input;
+        //     input = uart_getc(UART_ID);
+        //     printf("%s", espResponse);
+        //     strncat(espResponse, &input, 1);
+        // }
+        // printf("SEND OK found\n");
+        // strcpy(espResponse, "");
     }
 
     const unsigned char m[] = {0x00};                                                                                           // plaintext
