@@ -36,11 +36,6 @@ void createClient()
 {
     // initialize esp client
     initEsp();
-    // for (size_t i = 0; i < 10; i++)
-    // {
-    //     printf("%d\n", i);
-    //     sleep_ms(1000);
-    // }
     char currentString[256] = "";
     printf("setting station mode\n");
     uart_puts(UART_ID, "AT+CWMODE=1\r\n");
@@ -49,6 +44,13 @@ void createClient()
         uart_puts(UART_ID, "AT+CWMODE=1\r\n");
         printf(currentString);
     }
+    // printf("disabling server\n");
+    // uart_puts(UART_ID, "AT+CIPSERVER=0\r\n");
+    // while (!waitUntilReady(currentString, 256, UART_ID))
+    // {
+    //     uart_puts(UART_ID, "AT+CIPSERVER=0\r\n");
+    //     printf(currentString);
+    // }
     printf("enabling single connection mode\n");
     uart_puts(UART_ID, "AT+CIPMUX=0\r\n");
     while (!waitUntilReady(currentString, 256, UART_ID))
@@ -70,6 +72,11 @@ void createClient()
         uart_puts(UART_ID, "AT+CWJAP=\"expressif\",\"1234567890\"\r\n");
         printf(currentString);
     }
+    for (size_t i = 0; i < 10; i++)
+    {
+        printf("%d\n", i);
+        sleep_ms(1000);
+    }
     printf("requesting ip info\n");
     uart_puts(UART_ID, "AT+CIPSTA?\r\n");
     while (!waitUntilReady(currentString, 256, UART_ID))
@@ -85,19 +92,12 @@ void createClient()
     }
     // change the ip based on the previous command output
     printf("connecting to server\n");
-    uart_puts(UART_ID, "AT+CIPSTART=\"TCP\",\"192.168.1.128\",2399\r\n");
+    uart_puts(UART_ID, "AT+CIPSTART=\"TCP\",\"192.168.4.1\",2399\r\n");
     while (!waitUntilReady(currentString, 256, UART_ID))
     {
-        uart_puts(UART_ID, "AT+CIPSTART=\"TCP\",\"192.168.1.128\",2399\r\n");
+        uart_puts(UART_ID, "AT+CIPSTART=\"TCP\",\"192.168.4.1\",2399\r\n");
         printf(currentString);
     }
-    // printf("disabling server\n");
-    // uart_puts(UART_ID, "AT+CIPSERVER=0\r\n");
-    // while (!waitUntilReady(currentString, 256, UART_ID))
-    // {
-    //     uart_puts(UART_ID, "AT+CIPSERVER=0\r\n");
-    //     printf(currentString);
-    // }
 }
 /**
  * @brief get samples, store into sampleArr, then send it to alice
