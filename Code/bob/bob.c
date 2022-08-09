@@ -1,12 +1,12 @@
 /*  Project:        Audio Encryption Project
-    Description:    Element 14 Pi-Fest challenge submission. System comprised of three Raspberry Pi Picos 
-                    named Bob, Alice, and Server. System securely sends audio between Bob and Alice using 
-                    a lightweight cryptographic algorithm. Keys are exchanged using X3DH. Bob receives audio 
+    Description:    Element 14 Pi-Fest challenge submission. System comprised of three Raspberry Pi Picos
+                    named Bob, Alice, and Server. System securely sends audio between Bob and Alice using
+                    a lightweight cryptographic algorithm. Keys are exchanged using X3DH. Bob receives audio
                     as input, encrypts it, and sends it to the server. Alice receives the message, decrypts
                     it, and plays the audio.
     Documentation:  https://github.com/lin0m/lightweight-cryptography
     Date:           Aug 9th, 2022
-    School:         Cal Poly Pomona 
+    School:         Cal Poly Pomona
     Group:          Dr. Aly's Research Team
     Members:        Melvin Relf
                     Russell Hua
@@ -85,10 +85,10 @@ void createClient()
     }
     // change the ip based on the previous command output
     printf("connecting to server\n");
-    uart_puts(UART_ID, "AT+CIPSTART=\"TCP\",\"192.168.1.128\",56506\r\n");
+    uart_puts(UART_ID, "AT+CIPSTART=\"TCP\",\"192.168.1.128\",2399\r\n");
     while (!waitUntilReady(currentString, 256, UART_ID))
     {
-        uart_puts(UART_ID, "AT+CIPSTART=\"TCP\",\"192.168.1.128\",56506\r\n");
+        uart_puts(UART_ID, "AT+CIPSTART=\"TCP\",\"192.168.1.128\",2399\r\n");
         printf(currentString);
     }
     // printf("disabling server\n");
