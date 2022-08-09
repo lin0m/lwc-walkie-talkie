@@ -85,11 +85,6 @@ void createServer()
     }
     strcpy(currentString, "");
     printf("Connected successfully\n");
-    // while (true)
-    // {
-    //     getTCPEsp(UART_ID, currentString, 256);
-    //     printf("%s", currentString);
-    // }
 }
 int main(void)
 {

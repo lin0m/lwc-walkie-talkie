@@ -18,21 +18,21 @@ void createClient()
     // initialize esp client
     initEsp();
     char currentString[256] = "";
-    printf("setting station mode");
+    printf("setting station mode\n");
     uart_puts(UART_ID, "AT+CWMODE=1\r\n");
     while (!waitUntilReady(currentString, 256, UART_ID))
     {
         uart_puts(UART_ID, "AT+CWMODE=1\r\n");
         printf(currentString);
     }
-    printf("connecting to wifi");
+    printf("\nconnecting to wifi\n");
     uart_puts(UART_ID, "AT+CWJAP=\"expressif\",\"1234567890\"\r\n");
     while (!waitUntilReady(currentString, 256, UART_ID))
     {
         uart_puts(UART_ID, "AT+CWJAP=\"expressif\",\"1234567890\"\r\n");
         printf(currentString);
     }
-    printf("requesting ip info");
+    printf("requesting ip info\n");
     uart_puts(UART_ID, "AT+CIPSTA?\r\n");
     while (!waitUntilReady(currentString, 256, UART_ID))
     {
