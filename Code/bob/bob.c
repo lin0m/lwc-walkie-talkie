@@ -18,6 +18,7 @@ void createClient()
     // initialize esp client
     initEsp();
     char currentString[256] = "";
+    printf("setting station mode");
     uart_puts(UART_ID, "AT+CWMODE=1\r\n");
     while (!waitUntilReady(currentString, 256, UART_ID))
     {
@@ -79,6 +80,7 @@ void sendMic(absolute_time_t *current,
     sendCip(BUFFER_SIZE, cipCommand);
     uart_puts(UART_ID, cipCommand);
     printf("Command is: %s", cipCommand);
+    uart_puts(UART_ID, "\r\n");
     // strcat(sampleArr, "\r\n\0");
     printf("stuff sent is: ");
     // read a char at a time
@@ -176,17 +178,19 @@ int main(void)
     uint sm;
     initMic(&pio, &sm);
     int32_t sample;
-    char cipCommand[80];
+    char cipCommand[256];
     absolute_time_t current = get_absolute_time();
     while (true)
     {
-        // sendMic(&current, &sample, sampleArr, &pio, &sm, SAMPLE_ARR_SIZE, cipCommand, BUFFER_SIZE);
+        sendMic(&current, &sample, sampleArr, &pio, &sm, SAMPLE_ARR_SIZE, cipCommand, BUFFER_SIZE);
         // sendCip(4, cipCommand);
-        strcpy(cipCommand, "AT+CIPSEND=4\r\n");
-        printf("cipCommand is: %s", cipCommand);
-        uart_puts(UART_ID, cipCommand);
-        printf("sending test\n");
-        uart_puts(UART_ID, "test");
+        // // strcpy(cipCommand, "AT+CIPSEND=4\r\n");
+        // printf("cipCommand is: %s", cipCommand);
+
+        // uart_puts(UART_ID, cipCommand);
+        // uart_puts(UART_ID, "\r\n");
+        // printf("sending test\n");
+        // uart_puts(UART_ID, "test");
     }
 
     const unsigned char m[] = {0x00};                                                                                           // plaintext
