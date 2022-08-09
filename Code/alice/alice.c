@@ -150,7 +150,7 @@ int main(void)
     // const size_t SAMPLES = 44100;
     // const size_t SAMPLES = 1;
     // the samples must be multiplied by 4 for each char that makes up a sample
-    // 2 chars for one half of sample
+        // 2 chars for one half of sample
     // const size_t BUFFER = (SAMPLES * 4);
     const size_t SIZE_OF_RETURN = 0;
     const size_t MAX_BUFFER = (4);
@@ -165,13 +165,14 @@ int main(void)
     {
         printf("getting tcp value\n");
         getTCPEsp(UART_ID, result, BUFFER);
+        printf("data from tcp is: ", result);
         // if a reconnecting, the first sample will be wrong by 2 or 4 bytes but the rest are correct
-        for (size_t i = 0; i < BUFFER - (BUFFER % 4); i += 4)
-        {
-            lrData = result[i] << 24 | result[i + 1] << 16 | result[i + 2] << 8 | result[i + 3];
-            printf("data received is: %08X\n", lrData);
-            sendDac(pio, sm, lrData);
-        }
+        // for (size_t i = 0; i < BUFFER - (BUFFER % 4); i += 4)
+        // {
+        //     lrData = result[i] << 24 | result[i + 1] << 16 | result[i + 2] << 8 | result[i + 3];
+        //     printf("data received is: %08X\n", lrData);
+        //     sendDac(pio, sm, lrData);
+        // }
     }
 
     /*-----------------------------------DECRYPT AUDIO------------------------------------*/
