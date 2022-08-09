@@ -131,7 +131,7 @@ int getTCPEsp(uart_inst_t *uart_ID, char *result, size_t resultCapacity)
     for (size_t i = 0; i < atoi(amount); i++)
     {
         input = uart_getc(uart_ID);
-        strncat(result, &input, 1);
+        result[i] = input;
         printf("result: %s", result);
     }
     return atoi(linkID);
