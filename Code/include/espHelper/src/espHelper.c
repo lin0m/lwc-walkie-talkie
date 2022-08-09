@@ -113,26 +113,28 @@ int getTCPEsp(uart_inst_t *uart_ID, char *result, size_t resultCapacity)
     while (input != ',')
     {
         input = uart_getc(uart_ID);
-        printf("IPD: %c", input);
+        // printf("IPD: %c", input);
     }
     input = uart_getc(uart_ID);
     while (input != ',')
     {
         strncat(linkID, &input, 1);
-        printf("linkID: %s", linkID);
+        // printf("linkID: %s", linkID);
         input = uart_getc(uart_ID);
     }
     input = uart_getc(uart_ID);
     while (input != ':')
     {
         strncat(amount, &input, 1);
-        printf("amount: %s", amount);
+        // printf("amount: %s", amount);
         input = uart_getc(uart_ID);
     }
     // TODO no bounds checking here, there might be problems later
+    printf ("amount of data is: %d", atoi(amount));
     printf("result: ");
     for (size_t i = 0; i < atoi(amount); i++)
     {
+        printf("i is: %d", i);
         input = uart_getc(uart_ID);
         result[i] = input;
         printf("%c", input);
