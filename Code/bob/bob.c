@@ -25,6 +25,13 @@ void createClient()
         uart_puts(UART_ID, "AT+CWMODE=1\r\n");
         printf(currentString);
     }
+    printf("disconnecting from AP\n");
+    uart_puts(UART_ID, "AT+CWQAP\r\n");
+    while (!waitUntilReady(currentString, 256, UART_ID))
+    {
+        uart_puts(UART_ID, "AT+CWQAP\r\n");
+        printf(currentString);
+    }
     printf("\nconnecting to wifi\n");
     uart_puts(UART_ID, "AT+CWJAP=\"expressif\",\"1234567890\"\r\n");
     while (!waitUntilReady(currentString, 256, UART_ID))
@@ -40,6 +47,7 @@ void createClient()
         printf(currentString);
     }
     // change the ip based on the previous command output
+    printf("connecting to server\n");
     uart_puts(UART_ID, "AT+CIPSTART=\"TCP\",\"192.168.4.1\",2399\r\n");
     while (!waitUntilReady(currentString, 256, UART_ID))
     {
@@ -47,8 +55,21 @@ void createClient()
         printf(currentString);
     }
 }
+/**
+ * @brief get samples, store into sampleArr, then send it to alice
+ * @note variables initialized outside
+ * 
+ * @param current time variable
+ * @param sample single sample mic - 32 bit value
+ * @param sampleArr array of samples to send
+ * @param pio pio instance of mic program
+ * @param sm state machine of the mic program
+ * @param SAMPLE_ARR_SIZE size of the sample array
+ * @param cipCommand at command to send
+ * @param BUFFER_SIZE size of the whole array being sent
+ */
 void sendMic(absolute_time_t *current,
-             int32_t *sample, char *sampleArr,
+             int32_t sample, char *sampleArr,
              PIO *pio, uint *sm,
              const size_t SAMPLE_ARR_SIZE,
              char *cipCommand,
@@ -57,13 +78,14 @@ void sendMic(absolute_time_t *current,
 
     *current = get_absolute_time();
     // fill in 32 bits at a time; 4 chars at once
-    for (uint64_t i = 0; i < SAMPLE_ARR_SIZE - SAMPLE_ARR_SIZE % 4; i += 4)
+    printf("beginning to get sample\n");
+    for (uint64_t i = 0; i < SAMPLE_ARR_SIZE - (SAMPLE_ARR_SIZE % 4); i += 4)
     {
-        *sample = getSingleSampleBlocking(pio, sm);
-        sampleArr[i] = (*sample >> 24) & 0x000000FF;
-        sampleArr[i + 1] = (*sample >> 16) & 0x000000FF;
-        sampleArr[i + 2] = (*sample >> 8) & 0x000000FF;
-        sampleArr[i + 3] = (*sample) & 0x000000FF;
+        sample = getSingleSampleBlocking(*pio, *sm);
+        sampleArr[i] = (sample >> 24) & 0x000000FF;
+        sampleArr[i + 1] = (sample >> 16) & 0x000000FF;
+        sampleArr[i + 2] = (sample >> 8) & 0x000000FF;
+        sampleArr[i + 3] = (sample) & 0x000000FF;
         // printf("i is: %llu\n", i);
         if (!printTimer(current, 1000 * 10))
         {
@@ -78,8 +100,8 @@ void sendMic(absolute_time_t *current,
     }
     // send half a second buffer for now; later change it to fit in tinyJambu
     sendCip(BUFFER_SIZE, cipCommand);
-    uart_puts(UART_ID, cipCommand);
     printf("Command is: %s", cipCommand);
+    uart_puts(UART_ID, cipCommand);
     uart_puts(UART_ID, "\r\n");
     // strcat(sampleArr, "\r\n\0");
     printf("stuff sent is: ");
@@ -173,16 +195,17 @@ int main(void)
     printf("initializing esp\n");
 
     createClient();
+    printf("init esp complete\n");
     char sampleArr[BUFFER_SIZE];
     PIO pio;
     uint sm;
     initMic(&pio, &sm);
     int32_t sample;
-    char cipCommand[256];
+    char cipCommand[80];
     absolute_time_t current = get_absolute_time();
     while (true)
     {
-        sendMic(&current, &sample, sampleArr, &pio, &sm, SAMPLE_ARR_SIZE, cipCommand, BUFFER_SIZE);
+        sendMic(&current, sample, sampleArr, &pio, &sm, SAMPLE_ARR_SIZE, cipCommand, BUFFER_SIZE);
         // sendCip(4, cipCommand);
         // // strcpy(cipCommand, "AT+CIPSEND=4\r\n");
         // printf("cipCommand is: %s", cipCommand);

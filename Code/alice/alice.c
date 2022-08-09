@@ -33,6 +33,13 @@ void createServer()
         printf("%d\n", i);
         sleep_ms(1000);
     }
+    printf("closing existing connections\n");
+    uart_puts(UART_ID, "AT+CIPCLOSE=5\r\n");
+    while (!waitUntilReady(currentString, 256, UART_ID))
+    {
+        uart_puts(UART_ID, "AT+CIPCLOSE=5\r\n");
+        printf(currentString);
+    }
     printf("setting ap mode\n");
     while (!waitUntilReady(currentString, 256, UART_ID))
     {
@@ -145,7 +152,7 @@ int main(void)
     // the samples must be multiplied by 4 for each char that makes up a sample
         // 2 chars for one half of sample
     // const size_t BUFFER = (SAMPLES * 4);
-    const size_t SIZE_OF_RETURN = 3;
+    const size_t SIZE_OF_RETURN = 0;
     const size_t MAX_BUFFER = (8192);
     const size_t BUFFER = MAX_BUFFER - SIZE_OF_RETURN;
     char result[BUFFER];
