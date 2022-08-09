@@ -130,31 +130,33 @@ int getTCPEsp(uart_inst_t *uart_ID, char *result, size_t resultCapacity)
         input = uart_getc(uart_ID);
     }
     printf("amount of data is: %d", atoi(amount));
-    if (atoi(amount) < resultCapacity) {
-        printf("result: ");
-        for (size_t i = 0; i < atoi(amount); i++)
-        {
-            printf("i is: %d\n", i);
-            input = uart_getc(uart_ID);
-            result[i] = input;
-            printf("%c", input);
-        }
-        result[atoi(amount)] = '\0';
-    } else {
-        // get partial sample in case of overflow
-        printf("Getting partial sample\n");
-        for (size_t i = 0; i < resultCapacity; i++)
-        {
-            printf("i is: %d\n", i);
-            input = uart_getc(uart_ID);
-            result[i] = input;
-            printf("%c", input);
-        }
-        result[resultCapacity] = '\0';
-        // remove rest of esp buffer
-        for (size_t i = 0; i < atoi(amount) - resultCapacity; i++)
-        {
-            uart_getc(uart_ID);
+    if (atoi(amount) > 0) {
+        if (atoi(amount) < resultCapacity) {
+            printf("result: ");
+            for (size_t i = 0; i < atoi(amount); i++)
+            {
+                printf("i is: %d\n", i);
+                input = uart_getc(uart_ID);
+                result[i] = input;
+                printf("%c", input);
+            }
+            result[atoi(amount)] = '\0';
+        } else {
+            // get partial sample in case of overflow
+            printf("Getting partial sample\n");
+            for (size_t i = 0; i < resultCapacity; i++)
+            {
+                printf("i is: %d\n", i);
+                input = uart_getc(uart_ID);
+                result[i] = input;
+                printf("%c", input);
+            }
+            result[resultCapacity] = '\0';
+            // remove rest of esp buffer
+            for (size_t i = 0; i < atoi(amount) - resultCapacity; i++)
+            {
+                uart_getc(uart_ID);
+            }
         }
     }
     return atoi(linkID);

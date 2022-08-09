@@ -144,8 +144,6 @@ int main(void)
     /*-----------------------------------LISTEN TO SERVER----------------------------------*/
     // loop until message received
     createServer();
-    // const size_t SAMPLES = 44100;
-    // const size_t SAMPLES = 1;
     // the samples must be multiplied by 4 for each char that makes up a sample
         // 2 chars for one half of sample
     // const size_t BUFFER = (SAMPLES * 4);
@@ -169,13 +167,14 @@ int main(void)
         //     printf("%X", result[i]);
         // }
         // printf("\n");
-        // if a reconnecting, the first sample will be wrong by 2 or 4 bytes but the rest are correct
         printf("data as chars is: %s\n", result);
-        for (size_t i = 0; i < (strlen(result) - SIZE_OF_NULL_CHAR) - ((strlen(result) - SIZE_OF_NULL_CHAR) % 4); i += 4)
-        {
-            lrData = result[i] << 24 | result[i + 1] << 16 | result[i + 2] << 8 | result[i + 3];
-            printf("data received is: %08X\n", lrData);
-            sendDac(pio, sm, lrData);
+        if (strlen(result) > 0) {
+            for (int i = 0; i < (strlen(result) - SIZE_OF_NULL_CHAR) - ((strlen(result) - SIZE_OF_NULL_CHAR) % 4); i += 4)
+            {
+                lrData = result[i] << 24 | result[i + 1] << 16 | result[i + 2] << 8 | result[i + 3];
+                printf("data received is: %08X\n", lrData);
+                sendDac(pio, sm, lrData);
+            }
         }
     }
 
