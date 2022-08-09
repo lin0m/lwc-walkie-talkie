@@ -128,11 +128,12 @@ int getTCPEsp(uart_inst_t *uart_ID, char *result, size_t resultCapacity)
         input = uart_getc(uart_ID);
     }
     // TODO no bounds checking here, there might be problems later
+    printf("result: ");
     for (size_t i = 0; i < atoi(amount); i++)
     {
         input = uart_getc(uart_ID);
         result[i] = input;
-        printf("result: %s", result);
+        printf("%c", input);
     }
     return atoi(linkID);
 }
