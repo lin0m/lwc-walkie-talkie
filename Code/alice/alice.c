@@ -165,7 +165,7 @@ int main(void)
     {
         printf("getting tcp value\n");
         getTCPEsp(UART_ID, result, BUFFER);
-        printf("data from tcp is: ", result);
+        printf("data from tcp is: %s", result);
         // if a reconnecting, the first sample will be wrong by 2 or 4 bytes but the rest are correct
         // for (size_t i = 0; i < BUFFER - (BUFFER % 4); i += 4)
         // {
