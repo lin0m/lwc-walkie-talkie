@@ -23,12 +23,16 @@ int main()
     gpio_set_function(UART_RX_PIN1, GPIO_FUNC_UART);
     char currentString[256] = "";
     // char temp[80] = "";
+    for (size_t i = 0; i < 10; i++)
+    {
+        printf("%d\n", i);
+        sleep_ms(1000);
+    }
     uart_puts(UART_ID, "AT+CWMODE=1\r\n");
     while (!waitUntilReady(currentString, 256, UART_ID)) {
         uart_puts(UART_ID, "AT+CWMODE=1\r\n");
         printf(currentString);
     }
-    sleep_ms(10000);
     printf("connecting to wifi");
     uart_puts(UART_ID, "AT+CWJAP=\"expressif\",\"1234567890\"\r\n");
     while (!waitUntilReady(currentString, 256, UART_ID)) {
@@ -43,9 +47,9 @@ int main()
     }
     printf(currentString);
     // change the ip based on the previous command output
-    uart_puts(UART_ID, "AT+CIPSTART=\"TCP\",\"192.168.4.1\",333\r\n");
+    uart_puts(UART_ID, "AT+CIPSTART=\"TCP\",\"192.168.4.1\",2339\r\n");
     while (!waitUntilReady(currentString, 256, UART_ID)) {
-        uart_puts(UART_ID, "AT+CIPSTART=\"TCP\",\"192.168.4.1\",333\r\n");
+        uart_puts(UART_ID, "AT+CIPSTART=\"TCP\",\"192.168.4.1\",2339\r\n");
         printf(currentString);
     }
 

@@ -152,8 +152,8 @@ void initEsp()
 /**
  * @brief constructs the cip command based on the number of bytes to send
  *
- * @param numberOfBytes
- * @param command
+ * @param numberOfBytes amount of bytes to send
+ * @param command The resulting command to send to the esp
  */
 void sendCip(const uint64_t numberOfBytes, char *command)
 {
