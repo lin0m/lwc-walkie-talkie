@@ -162,9 +162,10 @@ int main(void)
     initDac(&pio, &sm);
     while (true)
     {
+        printf("getting tcp value\n");
         getTCPEsp(UART_ID, result, BUFFER);
         // if a reconnecting, the first sample will be wrong by 2 or 4 bytes but the rest are correct
-        for (size_t i = 0; i < BUFFER - BUFFER % 4; i += 4)
+        for (size_t i = 0; i < BUFFER - (BUFFER % 4); i += 4)
         {
             lrData = result[i] << 24 | result[i + 1] << 16 | result[i + 2] << 8 | result[i + 3];
             printf("data received is: %08X\n", lrData);
