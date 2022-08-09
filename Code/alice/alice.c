@@ -150,10 +150,11 @@ int main(void)
     // const size_t SAMPLES = 44100;
     // const size_t SAMPLES = 1;
     // the samples must be multiplied by 4 for each char that makes up a sample
-        // 2 chars for one half of sample
+    // 2 chars for one half of sample
     // const size_t BUFFER = (SAMPLES * 4);
     const size_t SIZE_OF_RETURN = 0;
-    const size_t MAX_BUFFER = (8192);
+    const size_t MAX_BUFFER = (4);
+    // const size_t MAX_BUFFER = (8192);
     const size_t BUFFER = MAX_BUFFER - SIZE_OF_RETURN;
     char result[BUFFER];
     int32_t lrData;
