@@ -53,19 +53,17 @@ void createServer()
         printf("%s\n", currentString);
         uart_puts(UART_ID, "AT+CIPMUX=1\r\n");
     }
-    printf("%s\n", currentString);
     printf("setting wifi ssid and password\n");
     uart_puts(UART_ID, "AT+CWSAP=\"expressif\",\"1234567890\",5,3\r\n");
     while (!waitUntilReady(currentString, 256, UART_ID))
     {
         uart_puts(UART_ID, "AT+CWSAP=\"expressif\",\"1234567890\",5,3\r\n");
     }
-    printf("%s\n", currentString);
-    for (size_t i = 0; i < 10; i++)
-    {
-        printf("%d\n", i);
-        sleep_ms(1000);
-    }
+    // for (size_t i = 0; i < 10; i++)
+    // {
+    //     printf("%d\n", i);
+    //     sleep_ms(1000);
+    // }
     printf("enabling tcpip server\n");
     uart_puts(UART_ID, "AT+CIPSERVER=1,2399\r\n");
     while (!waitUntilReady(currentString, 256, UART_ID))
@@ -73,7 +71,6 @@ void createServer()
         uart_puts(UART_ID, "AT+CIPSERVER=1,2399\r\n");
         printf(currentString);
     }
-    printf("%s\n", currentString);
     printf("getting ip information\n");
     uart_puts(UART_ID, "AT+CIPAP?\r\n");
     while (!waitUntilReady(currentString, 256, UART_ID))
@@ -153,10 +150,11 @@ int main(void)
         // 2 chars for one half of sample
     // const size_t BUFFER = (SAMPLES * 4);
     const size_t SIZE_OF_RETURN = 0;
-    const size_t MAX_BUFFER = (4);
-    // const size_t MAX_BUFFER = (8192);
+    // const size_t MAX_BUFFER = (4);
+    const size_t MAX_BUFFER = (32);
     const size_t BUFFER = MAX_BUFFER - SIZE_OF_RETURN;
-    char result[BUFFER];
+    const size_t SIZE_OF_NULL_CHAR = 1;
+    char result[BUFFER + SIZE_OF_NULL_CHAR];
     int32_t lrData;
     PIO pio = pio0;
     uint sm;
@@ -165,19 +163,20 @@ int main(void)
     {
         printf("getting tcp value\n");
         getTCPEsp(UART_ID, result, BUFFER);
-        printf("data from tcp is: ");
-        for (size_t i = 0; i < 4; i++)
-        {
-            printf("%c", result[i]);
-        }
-        printf("\n");
-        // if a reconnecting, the first sample will be wrong by 2 or 4 bytes but the rest are correct
-        // for (size_t i = 0; i < BUFFER - (BUFFER % 4); i += 4)
+        // printf("data from tcp is: ");
+        // for (size_t i = 0; i < MAX_BUFFER; i++)
         // {
-        //     lrData = result[i] << 24 | result[i + 1] << 16 | result[i + 2] << 8 | result[i + 3];
-        //     printf("data received is: %08X\n", lrData);
-        //     sendDac(pio, sm, lrData);
+        //     printf("%X", result[i]);
         // }
+        // printf("\n");
+        // if a reconnecting, the first sample will be wrong by 2 or 4 bytes but the rest are correct
+        printf("data as chars is: %s\n", result);
+        for (size_t i = 0; i < (strlen(result) - SIZE_OF_NULL_CHAR) - ((strlen(result) - SIZE_OF_NULL_CHAR) % 4); i += 4)
+        {
+            lrData = result[i] << 24 | result[i + 1] << 16 | result[i + 2] << 8 | result[i + 3];
+            printf("data received is: %08X\n", lrData);
+            sendDac(pio, sm, lrData);
+        }
     }
 
     /*-----------------------------------DECRYPT AUDIO------------------------------------*/
