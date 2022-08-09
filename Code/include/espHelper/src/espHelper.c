@@ -107,6 +107,8 @@ int getTCPEsp(uart_inst_t *uart_ID, char *result, size_t resultCapacity)
     char amount[80];
     char *tempStr = NULL;
     strcpy(result, "");
+    strcpy(amount, "");
+    strcpy(linkID, "");
     input = uart_getc(uart_ID);
     while (input != ',')
     {
