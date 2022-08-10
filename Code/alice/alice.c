@@ -34,7 +34,7 @@
  * 4. Decrypt the audio
  * 5. Play the audio
  */
-void decrypt(const unsigned char *c, unsigned long long clen, const unsigned char *k, uint64_t* m_length);
+void decrypt(const unsigned char *c, const unsigned char *m, unsigned long long clen, const unsigned char *k, uint64_t* m_length);
 void createServer();
 void ConnectToServer(){};
 void SendtoServer(const unsigned char *id_public_key, unsigned char *spk_public_key, const unsigned char *spk_signature, int message_type){};
@@ -104,12 +104,14 @@ int main(void)
     const size_t BUFFER = MAX_BUFFER - SIZE_OF_RETURN;
     const size_t SIZE_OF_NULL_CHAR = 1;
     char result[BUFFER + SIZE_OF_NULL_CHAR];
+    char sampleResult[MAX_BUFFER - 8];
     int32_t lrData;
     PIO pio = pio0;
     uint sm;
     initDac(&pio, &sm);
     uint64_t m_length = MAX_BUFFER - 8;
     uint64_t getLength;
+
     while (true)
     {
         printf("getting tcp value\n");
@@ -119,7 +121,7 @@ int main(void)
         const unsigned char c[] = {0xA1, 0x75, 0xD5, 0xB5, 0xC1, 0xEE, 0x4A, 0x0F, 0xA1};                                           // ciphertext
         unsigned long long clen = sizeof(c);                                                                                        // ciphertext length pointer
         const unsigned char k[] = {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F}; // 128-bit key
-        decrypt(result, getLength, hex_hkdf_output, &m_length);
+        decrypt(result, sampleResult, BUFFER, k, &m_length);
         // printf("data from tcp is: ");
         // for (size_t i =  bvhb0; i < MAX_BUFFER; i++)
         // {
@@ -133,7 +135,7 @@ int main(void)
         // for (size_t i = 0; i <= BUFFER - 4; i += 4)
         for (size_t i = 0; i < m_length - (m_length % 4); i += 4)
         {
-            lrData = result[i] << 24 | result[i + 1] << 16 | result[i + 2] << 8 | result[i + 3];
+            lrData = sampleResult[i] << 24 | sampleResult[i + 1] << 16 | sampleResult[i + 2] << 8 | sampleResult[i + 3];
             printf("data received is: %08X\n", lrData);
             sendDac(pio, sm, lrData);
         }
@@ -224,9 +226,8 @@ void createServer()
     printf("Connected successfully\n");
 }
 
-void decrypt(const unsigned char *c, unsigned long long clen, const unsigned char *k, uint64_t* m_length)
+void decrypt(const unsigned char *c, const unsigned char *m, unsigned long long clen, const unsigned char *k, uint64_t* m_length)
 {
-    unsigned char m[*m_length];                                                                             // plaintext
     unsigned long long *mlen = m_length;                                                                    // plaintext length pointer
     const unsigned char ad[] = {0x00};                                                                     // associated data
     unsigned long long adlen = sizeof(ad);                                                                 // associated data length
