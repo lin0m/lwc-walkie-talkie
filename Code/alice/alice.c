@@ -108,7 +108,7 @@ int main(void)
     PIO pio = pio0;
     uint sm;
     initDac(&pio, &sm);
-    uint64_t m_length;
+    uint64_t m_length = MAX_BUFFER - 8;
     uint64_t getLength;
     while (true)
     {
