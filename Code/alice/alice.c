@@ -237,7 +237,7 @@ void decrypt(const unsigned char *c, unsigned long long clen, const unsigned cha
 
     // print
     printf("Plaintext = ");
-    for (int i = 0; i < m_length; i++)
+    for (int i = 0; i < *m_length; i++)
     {
         printf("%02X|", m[i]);
     }
