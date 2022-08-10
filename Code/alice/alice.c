@@ -34,7 +34,7 @@
  * 4. Decrypt the audio
  * 5. Play the audio
  */
-void decrypt(const unsigned char *c, unsigned long long clen, const unsigned char *k);
+void decrypt(const unsigned char *c, unsigned long long clen, const unsigned char *k, uint64_t* m_length);
 void createServer();
 void ConnectToServer(){};
 void SendtoServer(const unsigned char *id_public_key, unsigned char *spk_public_key, const unsigned char *spk_signature, int message_type){};
@@ -51,17 +51,6 @@ int main(void)
     ConnectToServer();
 
     // Generating long-term Identity Key pair for Bob
-    ed25519_create_seed(seed);                                   // create random seed
-    ed25519_create_keypair(id_public_key, id_private_key, seed); // create keypair out of seed
-
-    // Generate SignedPreKey Pair for bob
-    ed25519_create_seed(seed);                                     // create random seed
-    ed25519_create_keypair(spk_public_key, spk_private_key, seed); // create keypair out of seed
-
-    ed25519_sign(spk_signature, id_public_key, id_private_key);
-
-    // Send keys to server - with my message type to indicate to the server that this is the prekey bundle
-    SendtoServer(id_public_key, spk_public_key, spk_signature, 1);
 
     /*-------------------------------------START X3DH--------------------------------------*/
     // variables
@@ -77,6 +66,18 @@ int main(void)
     unsigned char dh_final[96];                   // Store the concatenation of the DH outputs
     unsigned char hex_hkdf_output[128];           // Final key to be passed to TinyJambu
     unsigned char ciphertext[32];                 // As of now we have kept it as 32 bits -- will need to verify
+
+    ed25519_create_seed(seed);                                   // create random seed
+    ed25519_create_keypair(id_public_key, id_private_key, seed); // create keypair out of seed
+
+    // Generate SignedPreKey Pair for bob
+    ed25519_create_seed(seed);                                     // create random seed
+    ed25519_create_keypair(spk_public_key, spk_private_key, seed); // create keypair out of seed
+
+    ed25519_sign(spk_signature, id_public_key, id_private_key);
+
+    // Send keys to server - with my message type to indicate to the server that this is the prekey bundle
+    SendtoServer(id_public_key, spk_public_key, spk_signature, 1);
     // TO Compile: gcc alice.c src/*.c ../rfc6234/*.c -o alice.exe
 
     // while (ReceiveFromAlice(alice_identity_public_key, alice_ephemeral_public_key, ciphertext, 3) == 1)
@@ -225,8 +226,8 @@ void createServer()
 
 void decrypt(const unsigned char *c, unsigned long long clen, const unsigned char *k, uint64_t* m_length)
 {
-    unsigned char m[m_length];                                                                             // plaintext
-    unsigned long long *mlen = m_length;                                                                  // plaintext length pointer
+    unsigned char m[*m_length];                                                                             // plaintext
+    unsigned long long *mlen = m_length;                                                                    // plaintext length pointer
     const unsigned char ad[] = {0x00};                                                                     // associated data
     unsigned long long adlen = sizeof(ad);                                                                 // associated data length
     unsigned char *nsec;                                                                                   // secret message number
