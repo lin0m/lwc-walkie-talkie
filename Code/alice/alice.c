@@ -187,8 +187,9 @@ int main(void)
         //     printf("%X", result[i]);
         // }
         // printf("\n");
-        
+
         // combine every 4 chars into a 32 bit sample and send it to the dac
+        // for (size_t i = 0; i <= BUFFER - 4; i += 4)
         printf("data as chars is: %s\n", result);
         for (size_t i = 0; i < BUFFER - (BUFFER % 4); i += 4)
         {

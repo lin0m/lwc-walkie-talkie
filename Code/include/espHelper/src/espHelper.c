@@ -100,7 +100,7 @@ bool waitUntilReady(char *currentString, const size_t length, uart_inst_t *uart_
  * @param resultCapacity capacity of result; unused for now
  * @return int - the link id, -1 if error
  */
-int getTCPEsp(uart_inst_t *uart_ID, char *result, size_t resultCapacity)
+int getTCPEsp(uart_inst_t *uart_ID, char *result, size_t resultCapacity, size_t* charAmount)
 {
     char input = ' ';
     char linkID[80];
@@ -130,6 +130,7 @@ int getTCPEsp(uart_inst_t *uart_ID, char *result, size_t resultCapacity)
         input = uart_getc(uart_ID);
     }
     printf("amount of data is: %d", atoi(amount));
+    *charAmount = atoi(amount);
     if (atoi(amount) > 0) {
         if (atoi(amount) < resultCapacity) {
             printf("result: ");
