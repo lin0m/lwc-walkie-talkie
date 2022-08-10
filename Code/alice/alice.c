@@ -35,6 +35,7 @@
  * 5. Play the audio
  */
 void decrypt(const unsigned char *c, unsigned long long clen, const unsigned char *k);
+void createServer();
 void ConnectToServer(){};
 void SendtoServer(const unsigned char *id_public_key, unsigned char *spk_public_key, const unsigned char *spk_signature, int message_type){};
 int ReceiveFromAlice(unsigned char *alice_identity_public_key, unsigned char *alice_ephemeral_public_key, unsigned char *initial_ciphertext, int message_type){};
@@ -42,6 +43,117 @@ void get_dh_output(unsigned char *alice_identity_public_key, unsigned char *spk_
                    unsigned char *alice_ephemeral_public_key, unsigned char *dh_final);
 void get_shared_key(unsigned char *dh_final, SHAversion whichSha, const unsigned char *salt_len, const unsigned char *info,
                     unsigned char *output_key, int okm_len);
+
+int main(void)
+{
+    /*----------------------------------CONNECT TO SERVER AND SEND PREKEY BUNDLE----------------------------------*/
+    // CONNECTING TO SERVER
+    ConnectToServer();
+
+    // Generating long-term Identity Key pair for Bob
+    ed25519_create_seed(seed);                                   // create random seed
+    ed25519_create_keypair(id_public_key, id_private_key, seed); // create keypair out of seed
+
+    // Generate SignedPreKey Pair for bob
+    ed25519_create_seed(seed);                                     // create random seed
+    ed25519_create_keypair(spk_public_key, spk_private_key, seed); // create keypair out of seed
+
+    ed25519_sign(spk_signature, id_public_key, id_private_key);
+
+    // Send keys to server - with my message type to indicate to the server that this is the prekey bundle
+    SendtoServer(id_public_key, spk_public_key, spk_signature, 1);
+
+    /*-------------------------------------START X3DH--------------------------------------*/
+    // variables
+    unsigned char id_public_key[32];              // Bob's Identity Public Key
+    unsigned char id_private_key[64];             // Bob's Identity Private Key
+    unsigned char seed[32];                       // Seed to generate new keys
+    unsigned char scalar[32];                     // Scalar to add to modify key
+    unsigned char spk_public_key[32];             // Bob's Signed prekey public
+    unsigned char spk_private_key[64];            // Bob's Signed prekey private
+    unsigned char spk_signature[64];              // Bob's Signed prekey signature
+    unsigned char alice_identity_public_key[32];  // Alice public identity key
+    unsigned char alice_ephemeral_public_key[32]; // Alice ephemeral/generated key
+    unsigned char dh_final[96];                   // Store the concatenation of the DH outputs
+    unsigned char hex_hkdf_output[128];           // Final key to be passed to TinyJambu
+    unsigned char ciphertext[32];                 // As of now we have kept it as 32 bits -- will need to verify
+    // TO Compile: gcc alice.c src/*.c ../rfc6234/*.c -o alice.exe
+
+    // while (ReceiveFromAlice(alice_identity_public_key, alice_ephemeral_public_key, ciphertext, 3) == 1)
+    // {
+    //     /**
+    //      * Waiting for server to send response of the encrypted audio
+    //      */
+    //     continue;
+    // }
+
+    get_dh_output(alice_identity_public_key, spk_private_key, id_private_key, alice_ephemeral_public_key, dh_final);
+    get_shared_key(dh_final, SHA512, NULL, NULL, hex_hkdf_output, 128);
+
+    /*------LOOP "LISTEN TO SERVER" &"DECRYPT AUDIO" & "PLAY DECRYPTED AUDIO" FOREVER-----*/
+    /*-----------------------------------LISTEN TO SERVER----------------------------------*/
+    // loop until message received
+    createServer();
+    // the samples must be multiplied by 4 for each char that makes up a sample
+        // 2 chars for one half of sample
+    // const size_t BUFFER = (SAMPLES * 4);
+    const size_t SIZE_OF_RETURN = 0;
+    // const size_t MAX_BUFFER = (4);
+    const size_t MAX_BUFFER = (32);
+    const size_t BUFFER = MAX_BUFFER - SIZE_OF_RETURN;
+    const size_t SIZE_OF_NULL_CHAR = 1;
+    char result[BUFFER + SIZE_OF_NULL_CHAR];
+    int32_t lrData;
+    PIO pio = pio0;
+    uint sm;
+    initDac(&pio, &sm);
+    uint64_t m_length;
+    uint64_t getLength;
+    while (true)
+    {
+        printf("getting tcp value\n");
+        getTCPEsp(UART_ID, result, BUFFER, &getLength);
+        /*-----------------------------------DECRYPT AUDIO------------------------------------*/
+        // variables
+        const unsigned char c[] = {0xA1, 0x75, 0xD5, 0xB5, 0xC1, 0xEE, 0x4A, 0x0F, 0xA1};                                           // ciphertext
+        unsigned long long clen = sizeof(c);                                                                                        // ciphertext length pointer
+        const unsigned char k[] = {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F}; // 128-bit key
+        decrypt(result, BUFFER, hex_hkdf_output, &m_length);
+        // printf("data from tcp is: ");
+        // for (size_t i =  bvhb0; i < MAX_BUFFER; i++)
+        // {
+        //     printf("%X", result[i]);
+        // }
+        // printf("\n");
+        
+        // combine every 4 chars into a 32 bit sample and send it to the dac
+        printf("data as chars is: %s\n", result);
+        // if BUFFER % 4 != 0, throw away extra characters
+        // for (size_t i = 0; i <= BUFFER - 4; i += 4)
+        for (size_t i = 0; i < m_length - (m_length % 4); i += 4)
+        {
+            lrData = result[i] << 24 | result[i + 1] << 16 | result[i + 2] << 8 | result[i + 3];
+            printf("data received is: %08X\n", lrData);
+            sendDac(pio, sm, lrData);
+        }
+        
+        // if (strlen(result) > 0) {
+        //     for (int i = 0; i < (strlen(result) - SIZE_OF_NULL_CHAR) - ((strlen(result) - SIZE_OF_NULL_CHAR) % 4); i += 4)
+        //     {
+        //         lrData = result[i] << 24 | result[i + 1] << 16 | result[i + 2] << 8 | result[i + 3];
+        //         printf("data received is: %08X\n", lrData);
+        //         sendDac(pio, sm, lrData);
+        //     }
+        // }
+    }
+
+    
+
+    /*--------------------------------PLAY DECRYPTED AUDIO--------------------------------*/
+
+    return 0;
+}
+
 void createServer()
 {
     initEsp();
@@ -110,121 +222,11 @@ void createServer()
     strcpy(currentString, "");
     printf("Connected successfully\n");
 }
-int main(void)
+
+void decrypt(const unsigned char *c, unsigned long long clen, const unsigned char *k, uint64_t* m_length)
 {
-
-    /*--------------------------------DEFINING VARIABLES FOR X3DH--------------------------*/
-    unsigned char id_public_key[32];              // Bob's Identity Public Key
-    unsigned char id_private_key[64];             // Bob's Identity Private Key
-    unsigned char seed[32];                       // Seed to generate new keys
-    unsigned char scalar[32];                     // Scalar to add to modify key
-    unsigned char spk_public_key[32];             // Bob's Signed prekey public
-    unsigned char spk_private_key[64];            // Bob's Signed prekey private
-    unsigned char spk_signature[64];              // Bob's Signed prekey signature
-    unsigned char alice_identity_public_key[32];  // Alice public identity key
-    unsigned char alice_ephemeral_public_key[32]; // Alice ephemeral/generated key
-    unsigned char dh_final[96];                   // Store the concatenation of the DH outputs
-    unsigned char hex_hkdf_output[128];           // Final key to be passed to TinyJambu
-    unsigned char ciphertext[32];                 // As of now we have kept it as 32 bits -- will need to verify
-    // TO Compile: gcc alice.c src/*.c ../rfc6234/*.c -o alice.exe
-
-    /*----------------------------------CONNECT TO SERVER AND SEND PREKEY BUNDLE----------------------------------*/
-
-    // CONNECTING TO SERVER
-    ConnectToServer();
-
-    // Generating long-term Identity Key pair for Bob
-    ed25519_create_seed(seed);                                   // create random seed
-    ed25519_create_keypair(id_public_key, id_private_key, seed); // create keypair out of seed
-
-    // Generate SignedPreKey Pair for bob
-    ed25519_create_seed(seed);                                     // create random seed
-    ed25519_create_keypair(spk_public_key, spk_private_key, seed); // create keypair out of seed
-
-    ed25519_sign(spk_signature, id_public_key, id_private_key);
-
-    // Send keys to server - with my message type to indicate to the server that this is the prekey bundle
-    SendtoServer(id_public_key, spk_public_key, spk_signature, 1);
-
-    /*-------------------------------------START X3DH--------------------------------------*/
-    // loop until message received
-
-    // while (ReceiveFromAlice(alice_identity_public_key, alice_ephemeral_public_key, ciphertext, 3) == 1)
-    // {
-    //     /**
-    //      * Waiting for server to send response of the encrypted audio
-    //      */
-    //     continue;
-    // }
-
-    get_dh_output(alice_identity_public_key, spk_private_key, id_private_key, alice_ephemeral_public_key, dh_final);
-    get_shared_key(dh_final, SHA512, NULL, NULL, hex_hkdf_output, 128);
-
-    /*------LOOP "LISTEN TO SERVER" &"DECRYPT AUDIO" & "PLAY DECRYPTED AUDIO" FOREVER-----*/
-    /*-----------------------------------LISTEN TO SERVER----------------------------------*/
-    // loop until message received
-    createServer();
-    // the samples must be multiplied by 4 for each char that makes up a sample
-        // 2 chars for one half of sample
-    // const size_t BUFFER = (SAMPLES * 4);
-    const size_t SIZE_OF_RETURN = 0;
-    // const size_t MAX_BUFFER = (4);
-    const size_t MAX_BUFFER = (32);
-    const size_t BUFFER = MAX_BUFFER - SIZE_OF_RETURN;
-    const size_t SIZE_OF_NULL_CHAR = 1;
-    char result[BUFFER + SIZE_OF_NULL_CHAR];
-    int32_t lrData;
-    PIO pio = pio0;
-    uint sm;
-    initDac(&pio, &sm);
-    while (true)
-    {
-        printf("getting tcp value\n");
-        getTCPEsp(UART_ID, result, BUFFER);
-        // printf("data from tcp is: ");
-        // for (size_t i = 0; i < MAX_BUFFER; i++)
-        // {
-        //     printf("%X", result[i]);
-        // }
-        // printf("\n");
-
-        // combine every 4 chars into a 32 bit sample and send it to the dac
-        // for (size_t i = 0; i <= BUFFER - 4; i += 4)
-        printf("data as chars is: %s\n", result);
-        for (size_t i = 0; i < BUFFER - (BUFFER % 4); i += 4)
-        {
-            lrData = result[i] << 24 | result[i + 1] << 16 | result[i + 2] << 8 | result[i + 3];
-            printf("data received is: %08X\n", lrData);
-            sendDac(pio, sm, lrData);
-        }
-        
-        // if (strlen(result) > 0) {
-        //     for (int i = 0; i < (strlen(result) - SIZE_OF_NULL_CHAR) - ((strlen(result) - SIZE_OF_NULL_CHAR) % 4); i += 4)
-        //     {
-        //         lrData = result[i] << 24 | result[i + 1] << 16 | result[i + 2] << 8 | result[i + 3];
-        //         printf("data received is: %08X\n", lrData);
-        //         sendDac(pio, sm, lrData);
-        //     }
-        // }
-    }
-
-    /*-----------------------------------DECRYPT AUDIO------------------------------------*/
-    // variables
-    const unsigned char c[] = {0xA1, 0x75, 0xD5, 0xB5, 0xC1, 0xEE, 0x4A, 0x0F, 0xA1};                                           // ciphertext
-    unsigned long long clen = sizeof(c);                                                                                        // ciphertext length pointer
-    const unsigned char k[] = {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F}; // 128-bit key
-    decrypt(c, clen, hex_hkdf_output);
-
-    /*--------------------------------PLAY DECRYPTED AUDIO--------------------------------*/
-
-    return 0;
-}
-
-void decrypt(const unsigned char *c, unsigned long long clen, const unsigned char *k)
-{
-    unsigned long long m_length = 80;                                                                      // plaintext length
     unsigned char m[m_length];                                                                             // plaintext
-    unsigned long long *mlen = &m_length;                                                                  // plaintext length pointer
+    unsigned long long *mlen = m_length;                                                                  // plaintext length pointer
     const unsigned char ad[] = {0x00};                                                                     // associated data
     unsigned long long adlen = sizeof(ad);                                                                 // associated data length
     unsigned char *nsec;                                                                                   // secret message number
@@ -236,7 +238,7 @@ void decrypt(const unsigned char *c, unsigned long long clen, const unsigned cha
     printf("Plaintext = ");
     for (int i = 0; i < m_length; i++)
     {
-        printf("%02X", m[i]);
+        printf("%02X|", m[i]);
     }
     printf("\n");
 }
