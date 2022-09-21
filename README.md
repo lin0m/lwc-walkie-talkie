@@ -1,4 +1,4 @@
-# lightweight-cryptography
+# Lightweight Cryptography Walkie Talkie Project
 ---------------------------------------------------------------------------------------------
 Research performed under the supervision of Dr. Mohamed El-Hadedy Aly. In collaboration with: 
 Graduate students: 
@@ -9,4 +9,4 @@ Undergraduate students:
       Dr. Aly's ECE 4820 class
       
 ---------------------------------------------------------------------------------------------
-This repository contains all the files related to our lightweight cryptography research.
+This repository contains all the files related to the walkie talkie project.
